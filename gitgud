@@ -1,0 +1,118 @@
+# To install git on linux
+$ sudo apt-get install git
+
+# Set up your profile
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+
+# View your settings
+$ git config --list
+
+# View a specific setting Example:
+$ git config user.name
+
+# Create an user on github.com
+# Remember to verify your email - Else you won't have any permissions
+# Frederik then has to send an invitaion for the project which you will have to accept
+
+# cd to catkin_ws/src in terminal
+
+# Clone our project from the server
+$ git clone https://github.com/FredNoerby/group2_AGV.git
+
+
+
+
+NORMAL PROCEDURE
+
+# To see which branch you're on \\ See staged/unstaged or untracked file \\ How many commits you haven't pushed to the master \\ etc.
+$ git status
+
+untracked = new file that has not got any commits so far
+staged = changed file added and ready for next commit
+unstaged = changed file not added to next commit 
+
+# To stage a change/file for commit use
+$ git add FILE_NAME
+
+# If you want to add all the changes you've made use
+$ git add .
+
+# To unstage a file for next commit use
+$ git reset FILE_NAME
+
+# If you want to unstage all use
+$ git reset .
+
+# When you've staged the files you want to commit you can commit the change with
+$ git commit -m "COMMIT_MESSAGE"
+
+# Example
+$ git commit -m "Added some code for the robot to pick up lunch"
+
+
+# When you are ready to upload your commits to the master
+# Start by making sure that you have the current version of the master by
+$ git pull origin master
+
+# This will download updates from the master if your version is not updated
+# Then you can upload your changes with
+$ git push origin master
+
+# You will have to login to your GitHub user account
+
+# To view a log of all the commits use
+$ git log
+
+# The log will show the author, date, and message of the commit 
+
+
+
+
+
+GOING BACK IN TIME TO A PREVIOUS COMMIT
+# Find what the commit is called by calling
+$ git log
+
+# Copy the long number from the commit you want to return to 
+# Then use the following to go back to the commit 
+git reset --hard <tag/branch/commit id>
+
+# Example
+git reset --hard fd9b75a3cdc94d6bf986543c00e0ca6721cec4b1
+
+
+
+
+
+
+BRANCHES
+
+# Creating a branch
+$ git branch NAME_OF_NEW_BRANCH
+
+# Switching branches
+$ git checkout NAME_OF_BRANCH
+
+# Example switching branch to Master
+$ git checkout master
+
+# Merging branches
+# Make sure you are on the branch you want to merge into
+$ git merge NAME_OF_BRANCH_YOU_WANT_TO_BE_MERGED_INTO_CURRENT_BRANCH
+
+# Example you are on Master brach and want to merge testing branch to the master
+$ git merge testing
+
+# Remember to delete branch when you are done with it
+$ git branch -d NAME_OF_BRANCH_TO_DELETE
+
+# Example remove branch called testing
+$ git branch -d testing
+
+# To view all branches use 
+$ git branch
+
+
+# Don't use the -f for force unless you totally know what you're doing
+git push origin master -f
