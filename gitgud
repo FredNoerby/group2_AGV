@@ -83,6 +83,12 @@ git reset --hard fd9b75a3cdc94d6bf986543c00e0ca6721cec4b1
 
 
 
+TO NOT LOGIN EACH TIME YOU PUSH TO MASTER
+# Set git to use the credential memory cache
+$ git config --global credential.helper cache
+
+# Set the cache to timeout after 1 hour (setting is in seconds)
+$ git config --global credential.helper 'cache --timeout=3600'
 
 
 
