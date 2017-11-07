@@ -7,7 +7,7 @@ import tf
 
 
 if __name__ == '__main__':
-    rospy.init_node('listener')
+    rospy.init_node('PointsForRobot')
     
 	# Points for the for robot
     point1 = tf.TransformBroadcaster()
