@@ -1,6 +1,6 @@
 #!/usr/bin/env python  
-import roslib
-roslib.load_manifest('learning_tf')
+#import roslib
+#roslib.load_manifest('learning_tf')
 import rospy
 import tf
 
