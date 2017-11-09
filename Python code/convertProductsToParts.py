@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import rospy
 
 # Dictionary of products
 product = { "P1": ["C1", "C3", "C4", "C4"],
