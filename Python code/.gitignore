@@ -1,0 +1,4 @@
+# Ignoring compiled python files
+convertProductsToParts.pyc
+loadProductionSchedule.pyc
+products.pyc
