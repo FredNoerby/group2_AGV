@@ -53,7 +53,7 @@ def send_plan_to_robot(products_to_send):
 	string_to_send = string_to_send[:-1]
 	rate = rospy.Rate(1)
 	rate.sleep()
-	print (string_to_send)
+	rospy.loginfo("Publishing plan:\n" + string_to_send)
 	pub.publish(string_to_send)
 	send_button.configure(text = "Send initial plan again")
 
@@ -62,17 +62,16 @@ def send_plan_to_robot(products_to_send):
 def fail_button_callback():
 	global fail_entry, product_list
 	text_input = fail_entry.get()
-	print(text_input)
 	fail_entry.delete(0, 'end')
 
 	for product in product_list:
 		if str(product.id) == text_input:
+			rospy.loginfo("Quality control failed product with id: " + text_input) 
 			product.status = "Failed from QC"
-
-	#UPDATE INTERFACE
-	reload_plan_interface(product_list)
-	#SEND TO ROBOT
-	send_plan_to_robot(product_list)
+			#UPDATE INTERFACE
+			reload_plan_interface(product_list)
+			#SEND TO ROBOT
+			send_plan_to_robot(product_list)
 
 
 """ Takes in a slot number and a part number and change the interface"""
