@@ -14,62 +14,65 @@ def convert_to_part_and_color(number_message):
 	part_and_color = ['EMPTY', '#e0e0e0']
 	if number_message == '1':
 		part_and_color[0] = 'C1'
-		part_and_color[1] = '#ffb3ba'
+		part_and_color[1] = '#07C5F1'
 	elif number_message == '2':
 		part_and_color[0] = 'C2'
-		part_and_color[1] = '#ffdfba'
+		part_and_color[1] = '#05cc26'
 	elif number_message == '3':
 		part_and_color[0] = 'C3'
-		part_and_color[1] = '#ffffba'
+		part_and_color[1] = '#f4873e'
 	elif number_message == '4':
 		part_and_color[0] = 'C4'
-		part_and_color[1] = '#baffc9'
+		part_and_color[1] = '#9b65a9'
 	elif number_message == '5':
 		part_and_color[0] = 'C5'
-		part_and_color[1] = '#bae1ff'
+		part_and_color[1] = '#f2ca21'
 	elif number_message == '6':
 		part_and_color[0] = 'C6'
-		part_and_color[1] = '#edbff0'
+		part_and_color[1] = '#df4949'
 
 	return part_and_color
 
 
+""" Reloads the production plan interface"""
+def reload_plan_interface(list_of_products):
+	# Goes through the list and adds each product to the interface
+	for i in range(len(list_of_products)):
+		tkinter.Label(main_window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=(i+2), column=0, columnspan=1, sticky='nsew')
+		tkinter.Label(main_window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=(i+2), column=1, columnspan=1, sticky='nsew')
+		tkinter.Label(main_window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=(i+2), column=2, columnspan=1, sticky='nsew')
+
+
+
 """ Takes in a list of products and publishes the parts needed for the products"""
 def send_plan_to_robot(products_to_send):
-	parts = convertProductsToParts.get_parts_to_fetch(products_to_send)
-	pub = rospy.Publisher('plan_whisperer', String, queue_size=10)
-	parts_to_fetch_string = ("INITIAL_PART_LIST ")
-	for part in parts:
-		parts_to_fetch_string += (part + " ")
-	rospy.loginfo(parts_to_fetch_string)
+	string_to_send = ""
+	pub = rospy.Publisher('interface_plan_talker', String, queue_size=10)
+	for product in products_to_send:
+		string_to_send += (str(product.id) + "\t" + product.type + "\t" + product.status + "\n") 
+	string_to_send = string_to_send[:-1]
 	rate = rospy.Rate(1)
-	#pub.publish(parts_to_fetch_string)
 	rate.sleep()
-	pub.publish(parts_to_fetch_string)
+	rospy.loginfo("Publishing plan:\n" + string_to_send)
+	pub.publish(string_to_send)
 	send_button.configure(text = "Send initial plan again")
 
 
 """ Fails a product if the user entered ID matches one in the list"""
 def fail_button_callback():
-	global fail_entry, product_list, product_id_list
+	global fail_entry, product_list
 	text_input = fail_entry.get()
-	print(text_input)
+	fail_entry.delete(0, 'end')
 
-	if int(text_input) in product_id_list:
-		print(product_list[int(text_input)-2])
-		tkinter.Label(main_window, text='Failed', relief='ridge', width=15, bg='#e0e0e0').grid(row=int(text_input), column=2, columnspan=1, sticky='nsew')
+	for product in product_list:
+		if str(product.id) == text_input:
+			rospy.loginfo("Quality control failed product with id: " + text_input) 
+			product.status = "Failed from QC"
+			#UPDATE INTERFACE
+			reload_plan_interface(product_list)
+			#SEND TO ROBOT
+			send_plan_to_robot(product_list)
 
-	
-""" Takes in a product ID and a status code to change the status of some product"""
-"""def change_product_status(status_code):
-	if status_code == 1:
-		# Change status to fetching parts
-		print("fetching parts")
-	elif status_code == 2:
-		# Change status to ready for QC
-		print("Assembled")
-		tkinter.Label(main_window, text='Assembled', relief='ridge', width=15, bg='#e0e0e0').grid(row=global_counter, column=2, columnspan=1, sticky='nsew')
-"""
 
 """ Takes in a slot number and a part number and change the interface"""
 def change_robot_slots(slot, part_number):
@@ -139,13 +142,22 @@ def assembly_callback(data):
 	change_assembly_slots(6, words[5])
 
 
+""" Function that takes in published data 
+	and splits it into pieces for the production schedule interface"""
+def schedule_callback(data):
+	# Saves the data in its string form
+	info_gotten = data.data
+	# Splits the data string and stores them in a list
+	words = info_gotten.split(' ')
+
+
 """ Function that initializes this as the interface node
 	and subscribes to product_schedule, robot_inventory and assembly_line subjects"""
 def listener():
     # Subscribes to robot_inventory and assembly_line topics
     rospy.Subscriber('robot_inventory', String, robot_callback)
     rospy.Subscriber('assembly_line', String, assembly_callback)
-    """***SHOULD ALSO SUBSCRIBE TO PRODUCTION SCHEDULE***"""
+    rospy.Subscriber('production_schedule', String, schedule_callback)
 
     # For running the tkinter GUI - replaces the rospy.spin function
     main_window.mainloop()
@@ -177,18 +189,16 @@ product_text.grid(row=1, column=1, columnspan=1, sticky='nsew')
 status_text = tkinter.Label(main_window, text='Status', relief='ridge', width=15, bg='#64b5f6')
 status_text.grid(row=1, column=2, columnspan=1, sticky='nsew')
 
-# Uses the loadProductionSchedule class to save the production plan as a list
+
+# Uses the loadProductionSchedule class to save the production plan as a list of type Product
 product_list = loadProductionSchedule.load_production_plan()
-product_id_list = []
 rospy.loginfo("Loading in production plan..")
 
 # Goes through the list and adds each product to the interface
-for i in range(2, (len(product_list))+2):
-	tkinter.Label(main_window, text=str(i), relief='ridge', width=5, bg='#e0e0e0').grid(row=i, column=0, columnspan=1, sticky='nsew')
-	tkinter.Label(main_window, text=product_list[i-2], relief='ridge', width=10, bg='#e0e0e0').grid(row=i, column=1, columnspan=1, sticky='nsew')
-	tkinter.Label(main_window, text='Waiting', relief='ridge', width=15, bg='#e0e0e0').grid(row=i, column=2, columnspan=1, sticky='nsew')
-    #tkinter.Button(main_window, text='Fail', command=lambda: do_stuff("lambda can take parameters"), relief='ridge', bg='red').grid(row=i, column=2, columnspan=1, sticky='nsew')
-	product_id_list.append(i)
+for i in range(len(product_list)):
+	tkinter.Label(main_window, text=product_list[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=(i+2), column=0, columnspan=1, sticky='nsew')
+	tkinter.Label(main_window, text=product_list[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=(i+2), column=1, columnspan=1, sticky='nsew')
+	tkinter.Label(main_window, text=product_list[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=(i+2), column=2, columnspan=1, sticky='nsew')
 
 # Creating a button for sending production schedule to robot
 send_button = tkinter.Button(main_window, text='Send plan to robot', command=lambda: send_plan_to_robot(product_list), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
@@ -198,7 +208,7 @@ send_button.grid(row=0, column=4, columnspan=2, sticky='nsew')
 fail_button = tkinter.Button(main_window, text='Fail product..', command=fail_button_callback, relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
 fail_button.grid(row=1, column=4, columnspan=1, sticky='nsew')
 # Creating a entry field 
-fail_entry = tkinter.Entry(main_window, text='Product ID', relief='ridge', width=7)
+fail_entry = tkinter.Entry(main_window, text='ID', relief='ridge', width=7)
 fail_entry.grid(row=1, column=5, columnspan=1, sticky='nsew')
 
 
