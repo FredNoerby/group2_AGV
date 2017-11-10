@@ -9,7 +9,7 @@
 ros::NodeHandle nh;
 
 //geometry_msgs::TransformStamped Cordi_New;
-ros::Publisher chatter("chatter", &Cordi_New);
+//ros::Publisher chatter("chatter", &Cordi_New);
 
 void messageCb( const geometry_msgs::TransformStamped& Cordi_New){
   digitalWrite(13, HIGH-digitalRead(13));   
@@ -24,8 +24,8 @@ ros::Subscriber<geometry_msgs::TransformStamped> sub("/Move_Cordinats", &message
 
 void setup()
 {
-  nh.initNode();
   pinMode(13, OUTPUT);
+  nh.initNode();
   nh.subscribe(sub);
   //nh.advertise(chatter);  
 
@@ -36,5 +36,5 @@ void loop()
 {
   //chatter.publish( &Cordi_New );
   nh.spinOnce();
-  delay(10000);
+  delay(1000);
 }
