@@ -47,7 +47,7 @@ def reload_plan_interface(list_of_products):
 """ Takes in a list of products and publishes the parts needed for the products"""
 def send_plan_to_robot(products_to_send):
 	string_to_send = ""
-	pub = rospy.Publisher('plan_whisperer', String, queue_size=10)
+	pub = rospy.Publisher('interface_plan_talker', String, queue_size=10)
 	for product in products_to_send:
 		string_to_send += (str(product.id) + " " + product.type + " " + product.status + "\n") 
 	string_to_send = string_to_send[:-1]
