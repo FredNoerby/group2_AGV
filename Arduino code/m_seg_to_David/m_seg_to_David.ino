@@ -235,55 +235,60 @@ int counter = 0;
 // We intialize a variable for the goal
 float goal = 0.0;
 
+int received_integer = 1;
+
 void loop() {
   // Estimation
   tachometer0.update(encoders.getEncoder0());
   tachometer1.update(encoders.getEncoder1());
   // Control
   output_lpf.update(0.0);
-
-  // Increments the counter if it is below 100 else it sets it to zero
-  if (counter < 100) {
-    counter ++;  
-  } else {
-    counter = 0;
+  if      (received_integer == 1){
+    Serial.println ("FORWARD");
+    // The pwm's are calculated using the PID controller function
+    // It takes in the motors rotations per second in as velocity and the encoder values as positions
+    pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), -1);
+    pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), -1);
   }
-
-  // Changes the goal from positive to negative depending on the counter
-  // This makes the motors spin one way when the counter is below 50 and the other way when it is above
- if (counter < 50) {
-    goal = -1;
-  } else {
-    goal = 1;
+  else if (received_integer == 2){
+    Serial.println ("LEFT");
+    delay (timer);
+    // The pwm's are calculated using the PID controller function
+    // It takes in the motors rotations per second in as velocity and the encoder values as positions
+    pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), 1);
+    pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), -1);
+    
   }
+  else if (received_integer == 3){
+    Serial.println ("RIGHT");
+    // The pwm's are calculated using the PID controller function
+    // It takes in the motors rotations per second in as velocity and the encoder values as positions
+    pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), -1);
+    pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), 1);
 
-  // The pwm's are calculated using the PID controller function
-  // It takes in the motors rotations per second in as velocity and the encoder values as positions
-  pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), goal);
-  pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), goal);
+    
+  }
+  else if (received_integer == 4){
+    Serial.println ("BACKWARD");
+    // The pwm's are calculated using the PID controller function
+    // It takes in the motors rotations per second in as velocity and the encoder values as positions
+    pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), 1);
+    pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), 1);
+
+    
+  }
+  else {
+    Serial.println ("STOP");
+    // The pwm's are calculated using the PID controller function
+    // It takes in the motors rotations per second in as velocity and the encoder values as positions
+    pwm = pid_controller(tachometer1.getValue(), encoders.getEncoder1(), 0);
+    pwm2 = pid_controller(tachometer0.getValue(), encoders.getEncoder0(), 0);
+    
+  }
 
   // The feed forward drive method is used to drive the two motors with the calculated PWM
   feedforwardDrive(&motor0, pwm);
   feedforwardDrive(&motor1, pwm2);
-
-  // We set it to print some of the readings so we know can check if it is correct. 
-  Serial.print("Left position: ");
-  Serial.print(encoders.getEncoder0());
-  Serial.print(" Left angular velocity: ");
-  Serial.print(tachometer0.getValue());
-  Serial.print(' ');
-  Serial.print("PWM: ");
-  Serial.print(pwm2);
-  Serial.print("  Right position: ");
-  Serial.print(encoders.getEncoder1());
-  Serial.print(" Right angular velocity: ");
-  Serial.print(tachometer1.getValue());
-  Serial.print(' ');
-  Serial.print("PWM: ");
-  Serial.print(pwm);
-  Serial.print("Goal");
-  Serial.print(goal);
-  Serial.println();
 
   // The loop sleeps for the rate amount of time (around 1/10th of a second)
   rate.sleep();
