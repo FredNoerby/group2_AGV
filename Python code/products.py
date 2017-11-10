@@ -10,7 +10,7 @@ class Product:
         status (str): the current state of the product 
     """
 
-    def __init__(self, id, type, status="waiting"):
+    def __init__(self, id, type, status="Waiting"):
         """ Product init method
 
         Args:
