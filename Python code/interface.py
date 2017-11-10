@@ -49,7 +49,7 @@ def send_plan_to_robot(products_to_send):
 	string_to_send = ""
 	pub = rospy.Publisher('interface_plan_talker', String, queue_size=10)
 	for product in products_to_send:
-		string_to_send += (str(product.id) + " " + product.type + " " + product.status + "\n") 
+		string_to_send += (str(product.id) + "\t" + product.type + "\t" + product.status + "\n") 
 	string_to_send = string_to_send[:-1]
 	rate = rospy.Rate(1)
 	rate.sleep()
