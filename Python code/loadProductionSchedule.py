@@ -12,7 +12,9 @@ def load_production_plan():
     # Adds all the cells that have a value to the production list
     while more_products:
         if sheet_one.cell(row=incrementer, column=1).value:
-            production_list.append( Product((281+incrementer*2), str(sheet_one.cell(row=incrementer, column=1).value)))
+
+            sheet_one.cell(row=incrementer, column=1).value
+            production_list.append( Product((incrementer-2), str(sheet_one.cell(row=incrementer, column=1).value)))
         else:
             more_products = False
 
@@ -20,8 +22,8 @@ def load_production_plan():
 
     return production_list
 
-# Uses the openpyxl library to open the production plan excel file 
-workbook = openpyxl.load_workbook('/home/sev-ros/catkin_ws/src/beginner_tutorials/scripts/Daily_Production_Plan.xlsx')
+# Uses the openpyxl library to open the production plan excel file
+workbook = openpyxl.load_workbook('/home/sev-ros/catkin_ws/src/group2_AGV/Daily_Production_Plan.xlsx')
 type(workbook)
 
 # Stores the first sheet of the excel file

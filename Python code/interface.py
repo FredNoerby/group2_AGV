@@ -36,12 +36,18 @@ def convert_to_part_and_color(number_message):
 
 """ Reloads the production plan interface"""
 def reload_plan_interface(list_of_products):
+	column_counter = 1
+	row_counter = 2
 	# Goes through the list and adds each product to the interface
 	for i in range(len(list_of_products)):
-		tkinter.Label(main_window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=(i+2), column=0, columnspan=1, sticky='nsew')
-		tkinter.Label(main_window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=(i+2), column=1, columnspan=1, sticky='nsew')
-		tkinter.Label(main_window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=(i+2), column=2, columnspan=1, sticky='nsew')
+		if i == 34 or i == 67 :
+			column_counter += 4
+			row_counter = 2
 
+		tkinter.Label(main_window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+		tkinter.Label(main_window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
+		tkinter.Label(main_window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+		row_counter += 1
 
 
 """ Takes in a list of products and publishes the parts needed for the products"""
@@ -163,82 +169,89 @@ def listener():
     main_window.mainloop()
 
 
+
 """ CREATING THE MAIN WINDOW FOR THE INTERFACE """
 
 # Creating a main window for the user interface
 main_window = tkinter.Tk()
-
 # Defining title of window
 main_window.title("Quality Control")
 # Defining the geometry of the window and where on screen to place it
-main_window.geometry("690x480+100+100")
-
-# Adding padding in x and y for interface window
-main_window["padx"] = 8
-main_window["pady"] = 8
+main_window.geometry("{0}x{1}+0+0".format(main_window.winfo_screenwidth(), main_window.winfo_screenheight()))
 
 # Creates a header for the production schedule
 heading = tkinter.Label(main_window, text='Daily production schedule', relief='ridge', width=30, bg='#2286c3', fg='#ffffff')
-heading.grid(row=0, column=0, columnspan=3, sticky='nsew')
+heading.grid(row=0, column=1, columnspan=11, sticky='nsew')
 
 # Creates sub-headers for products and statuses
-id_text = tkinter.Label(main_window, text='ID', relief='ridge', width=5, bg='#64b5f6')
-id_text.grid(row=1, column=0, columnspan=1, sticky='nsew')
-product_text = tkinter.Label(main_window, text='Product', relief='ridge', width=10, bg='#64b5f6')
-product_text.grid(row=1, column=1, columnspan=1, sticky='nsew')
-status_text = tkinter.Label(main_window, text='Status', relief='ridge', width=15, bg='#64b5f6')
-status_text.grid(row=1, column=2, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=1, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=5, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=9, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=2, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=6, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=10, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=3, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=7, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=11, columnspan=1, sticky='nsew')
 
 
 # Uses the loadProductionSchedule class to save the production plan as a list of type Product
 product_list = loadProductionSchedule.load_production_plan()
 rospy.loginfo("Loading in production plan..")
-
+column_counter = 1
+row_counter = 2
 # Goes through the list and adds each product to the interface
 for i in range(len(product_list)):
-	tkinter.Label(main_window, text=product_list[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=(i+2), column=0, columnspan=1, sticky='nsew')
-	tkinter.Label(main_window, text=product_list[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=(i+2), column=1, columnspan=1, sticky='nsew')
-	tkinter.Label(main_window, text=product_list[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=(i+2), column=2, columnspan=1, sticky='nsew')
+	if i == 34 or i == 67 :
+		column_counter += 4
+		row_counter = 2
+
+	tkinter.Label(main_window, text=product_list[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+	tkinter.Label(main_window, text=product_list[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
+	tkinter.Label(main_window, text=product_list[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+	row_counter += 1
 
 # Creating a button for sending production schedule to robot
 send_button = tkinter.Button(main_window, text='Send plan to robot', command=lambda: send_plan_to_robot(product_list), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
-send_button.grid(row=0, column=4, columnspan=2, sticky='nsew')
+send_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
 # Creating a button for failing a product
 fail_button = tkinter.Button(main_window, text='Fail product..', command=fail_button_callback, relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
-fail_button.grid(row=1, column=4, columnspan=1, sticky='nsew')
+fail_button.grid(row=1, column=13, columnspan=1, sticky='nsew')
 # Creating a entry field 
 fail_entry = tkinter.Entry(main_window, text='ID', relief='ridge', width=7)
-fail_entry.grid(row=1, column=5, columnspan=1, sticky='nsew')
+fail_entry.grid(row=1, column=14, columnspan=1, sticky='nsew')
 
 
 # Creating robot slots
 heading_robot = tkinter.Label(main_window, text='Robot inventory slots', relief='ridge', width=30, bg='#64b5f6')
-heading_robot.grid(row=1, column=7, columnspan=2, sticky='nsew')
+heading_robot.grid(row=3, column=13, columnspan=2, sticky='nsew')
 robot_slot_1 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-robot_slot_1.grid(row=2, column=7, columnspan=1, sticky='nsew')
+robot_slot_1.grid(row=4, column=13, columnspan=1, sticky='nsew')
 robot_slot_2 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-robot_slot_2.grid(row=2, column=8, columnspan=1, sticky='nsew')
+robot_slot_2.grid(row=4, column=14, columnspan=1, sticky='nsew')
 
 # Filler to make space between production schedule and slots
-tkinter.Label(main_window, text=' ', width=1).grid(row=0, column=3, columnspan=1, sticky='nsew')
-tkinter.Label(main_window, text=' ', width=1).grid(row=0, column=6, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text=' ', width=1).grid(row=1, column=0, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text=' ', width=1).grid(row=1, column=4, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text=' ', width=1).grid(row=1, column=8, columnspan=1, sticky='nsew')
+tkinter.Label(main_window, text=' ', width=1).grid(row=1, column=12, columnspan=1, sticky='nsew')
 
 # Creating assembly line slots
 heading_assembly = tkinter.Label(main_window, text='Parts in assembly', relief='ridge', width=30, bg='#64b5f6')
-heading_assembly.grid(row=5, column=7, columnspan=2, sticky='nsew')
+heading_assembly.grid(row=6, column=13, columnspan=2, sticky='nsew')
 assembly_slot_1 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_1.grid(row=6, column=7, columnspan=1, sticky='nsew')
+assembly_slot_1.grid(row=7, column=13, columnspan=1, sticky='nsew')
 assembly_slot_2 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_2.grid(row=6, column=8, columnspan=1, sticky='nsew')
+assembly_slot_2.grid(row=7, column=14, columnspan=1, sticky='nsew')
 assembly_slot_3 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_3.grid(row=7, column=7, columnspan=1, sticky='nsew')
+assembly_slot_3.grid(row=8, column=13, columnspan=1, sticky='nsew')
 assembly_slot_4 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_4.grid(row=7, column=8, columnspan=1, sticky='nsew')
+assembly_slot_4.grid(row=8, column=14, columnspan=1, sticky='nsew')
 assembly_slot_5 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_5.grid(row=8, column=7, columnspan=1, sticky='nsew')
+assembly_slot_5.grid(row=9, column=13, columnspan=1, sticky='nsew')
 assembly_slot_6 = tkinter.Label(main_window, text='EMPTY', relief='ridge', width=15, bg='#e0e0e0')
-assembly_slot_6.grid(row=8, column=8, columnspan=1, sticky='nsew')
+assembly_slot_6.grid(row=9, column=14, columnspan=1, sticky='nsew')
 
 """ END OF CREATING INTERFACE """
 
