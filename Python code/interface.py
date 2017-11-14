@@ -40,7 +40,7 @@ def reload_plan_interface(list_of_products):
 	row_counter = 2
 	# Goes through the list and adds each product to the interface
 	for i in range(len(list_of_products)):
-		if i == 34 or i == 67 :
+		if i == 35 or i == 70 :
 			column_counter += 4
 			row_counter = 2
 
@@ -202,7 +202,7 @@ column_counter = 1
 row_counter = 2
 # Goes through the list and adds each product to the interface
 for i in range(len(product_list)):
-	if i == 34 or i == 67 :
+	if i == 35 or i == 70 :
 		column_counter += 4
 		row_counter = 2
 
