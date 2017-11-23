@@ -1,3 +1,4 @@
 # Ignoring some IntelliJ created files
 .idea/
 group2_AGV.iml
+.DS_Store
