@@ -43,6 +43,10 @@ if __name__ == '__main__':
     # Creates an AssemblyLine object with the ID of 10
     assembly_line_copenhagen = AssemblyLine(10, "placeholder_location")
 
+    print(assembly_line_copenhagen.id)
+    print(assembly_line_copenhagen.location)
+    print(assembly_line_copenhagen.storage)
     print(assembly_line_copenhagen.add_part_to_storage("C1"))
     print(assembly_line_copenhagen.add_part_to_storage("C1"))
     print(assembly_line_copenhagen.add_part_to_storage("C1"))
+    print(assembly_line_copenhagen.storage)
