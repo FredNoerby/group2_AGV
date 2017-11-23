@@ -6,13 +6,13 @@ class Robot:
         storage (str[list]): what is currently on the robot
     """
 
-    def __init__(self, id):
+    def __init__(self, unique_id):
         """ Robot initialize method
 
         Arguments:
             id (int): A unique number for identifying robots
         """
-        self.id = id
+        self.id = unique_id
         self.storage = []
 
     def add_part_to_storage(self, part):
