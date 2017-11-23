@@ -31,6 +31,24 @@ class Robot:
             # Returns message that robot is full
             return"Robot with id: " + str(self.id) + " is full"
 
+    def go_to_location(self, location):
+        """ Sends the robot to a specific location
+
+        Args:
+            location (Location): A location to go to
+        """
+        # TODO: Make the robot drive to location
+
+    def fetch(self, list_of_parts):
+        """ Adds a part to the robots storage
+
+        Args:
+            list_of_parts (str[list]): A part to add to storage
+        """
+        # TODO: check if robot is full. IF yes -> go_to_location(assembly)
+        # TODO: check for next missing part -> get it if the robot doesn't have it
+        # TODO: if robot has the next part in storage get part after that
+
 
 # Will only run if this is the main file being run
 if __name__ == '__main__':
