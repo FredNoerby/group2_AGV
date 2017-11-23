@@ -31,6 +31,14 @@ class Robot:
             # Returns message that robot is full
             return"Robot with id: " + str(self.id) + " is full"
 
+    def unload_parts(self, assembly_line):
+        """ Unloads parts at specific assembly line
+
+        Args:
+            assembly_line (AssemblyLine): where the parts should be unloaded
+        """
+        # TODO: unload parts at assembly line
+
     def go_to_location(self, location):
         """ Sends the robot to a specific location
 
