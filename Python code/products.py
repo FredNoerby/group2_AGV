@@ -7,7 +7,7 @@ class Product:
     Attributes:
         id (int): A unique number for identifying products
         type (str): the type of product (P1, P2, P3, or P4)
-        Parts (str[list]): the parts needed to assembly the product
+        parts (str[list]): the parts needed to assembly the product
         status (str): the current state of the product 
     """
 
