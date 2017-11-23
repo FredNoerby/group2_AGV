@@ -3,33 +3,41 @@ class Robot:
     
     Attributes:
         id (int): A unique number for identifying robots
-        storage_slots (str): the current state of the product 
+        storage_slots (str[list]): the current state of the product 
     """
 
     def __init__(self, id):
-        """ Product init method
+        """ Robot initialize method
 
-        Args:
+        Arguments:
             id (int): A unique number for identifying products
-            type (str): the type of product (P1, P2, P3, or P4)
-            status (Optional[str]): the current state of the product 
         """
         self.id = id
         self.storage = []
 
 
-    def add_part_to_storage(part):
+    def add_part_to_storage(self, part):
+        """ Adds a part to the robots storage
+
+        Args:
+            part (str): A part to add to storage
+        """
+
+        # Checks if the robot is already full
         if len(self.storage) < 2:
-            print("all good")
+            # Adds the part to the robots storage
             self.storage.append(part)
+            return ("Added " + part + " to robot with id: " + str(self.id))
         else:
-            print("Robot with id: " + self.id + " is full")
+            # Returns message that robot is full
+            return("Robot with id: " + self.id + " is full")
+
 
 # Will only run if this is the main file being runned
 if __name__ == '__main__':
     # Creates an Robot object with the ID of 99
     mc_turner = Robot(99)
 
-    mc_turner.add_part_to_storage("C1")
-    mc_turner.add_part_to_storage("C1")
-    mc_turner.add_part_to_storage("C1")
+    print(mc_turner.add_part_to_storage("C1"))
+    print(mc_turner.add_part_to_storage("C1"))
+    print(mc_turner.add_part_to_storage("C1"))
