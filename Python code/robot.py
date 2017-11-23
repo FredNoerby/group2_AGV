@@ -3,14 +3,14 @@ class Robot:
     
     Attributes:
         id (int): A unique number for identifying robots
-        storage (str[list]): the current state of the product
+        storage (str[list]): what is currently on the robot
     """
 
     def __init__(self, id):
         """ Robot initialize method
 
         Arguments:
-            id (int): A unique number for identifying products
+            id (int): A unique number for identifying robots
         """
         self.id = id
         self.storage = []
