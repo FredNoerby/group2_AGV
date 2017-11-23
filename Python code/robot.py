@@ -3,16 +3,17 @@ class Robot:
     
     Attributes:
         id (int): A unique number for identifying robots
-        storage (str[list]): what is currently on the robot
+        storage (str[list]): What is currently on the robot
     """
 
     def __init__(self, unique_id):
         """ Robot initialize method
 
         Arguments:
-            id (int): A unique number for identifying robots
+            unique_id (int): Initializes the ID of the robot
         """
         self.id = unique_id
+        # Storage is empty when the robot is initialized
         self.storage = []
 
     def add_part_to_storage(self, part):
@@ -35,7 +36,7 @@ class Robot:
         """ Unloads parts at specific assembly line
 
         Args:
-            assembly_line (AssemblyLine): where the parts should be unloaded
+            assembly_line (AssemblyLine): Where the parts should be unloaded
         """
         # TODO: unload parts at assembly line
 
