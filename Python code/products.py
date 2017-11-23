@@ -1,3 +1,4 @@
+# Imports the convertProductsToParts library used to get the parts of an product type
 import convertProductsToParts
 
 class Product:
@@ -23,10 +24,12 @@ class Product:
         self.status = status
         self.parts = convertProductsToParts.return_parts(type)
 
-
+# Will only run if this is the main file being runned
 if __name__ == '__main__':
+    # Creates an Product object with the ID of 2112 and the type of P2
     new_product = Product(2112, "P2")
 
+    # Prints all the stored information for the Product object
     print(new_product.id)
     print(new_product.type)
     print(new_product.parts)
