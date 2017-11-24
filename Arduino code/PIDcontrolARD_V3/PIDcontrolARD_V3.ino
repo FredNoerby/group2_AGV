@@ -130,7 +130,7 @@ void loop() {
   RightPID.Compute();                 // Calls a method in the PID library to compute the values   
   analogWrite(pwmb_pin, u_speed_R);   // sends output to PWM pin on motor
 
-  // Prints values for monitoring 
+  // Prints values for monitoring left wheel
   Serial.print("enc_speed_L: ");
   Serial.print(enc_speed_L);
   Serial.print(" u_speed_L: ");
@@ -138,7 +138,7 @@ void loop() {
   Serial.print(" ROS_speed_L_in ");
   Serial.print(ROS_speed_L_in);
   
-  // Prints values for monitoring 
+  // Prints values for monitoring right wheel
   Serial.print(" enc_speed_R: ");
   Serial.print(enc_speed_R);
   Serial.print(" u_speed_R: ");
