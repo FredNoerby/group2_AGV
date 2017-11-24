@@ -2,3 +2,5 @@
 convertProductsToParts.pyc
 loadProductionSchedule.pyc
 products.pyc
+.DS_Store
+__pycache__
