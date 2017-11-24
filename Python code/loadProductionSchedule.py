@@ -7,6 +7,12 @@ def load_production_plan():
     """ Goes through the production plan excel sheet and returns a list of products
         """
 
+    # Uses the openpyxl library to open the production plan excel file
+    workbook = openpyxl.load_workbook('../Daily_Production_Plan.xlsx')
+    type(workbook)
+
+    # Stores the first sheet of the excel file
+    sheet_one = workbook.get_sheet_by_name('Plan')
     # Boolean to check if there are more products in the excel file
     more_products = True
     # Incrementer starting from 3 because of layout of excel file
@@ -28,12 +34,6 @@ def load_production_plan():
     # Returns the list of products
     return production_list
 
-# Uses the openpyxl library to open the production plan excel file
-workbook = openpyxl.load_workbook('../Daily_Production_Plan.xlsx')
-type(workbook)
-
-# Stores the first sheet of the excel file
-sheet_one = workbook.get_sheet_by_name('Plan')
 
 # If this is run as main the cells will be printed
 if __name__ == "__main__":
