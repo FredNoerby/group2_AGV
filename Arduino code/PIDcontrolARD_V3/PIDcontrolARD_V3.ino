@@ -11,7 +11,7 @@ const int pulse_per_rev = 900;                            // Number of encoder p
 const float wheel_arc = (PI * wheel_dia)/ pulse_per_rev;  //covered distance in mm per encoder pulse
 
 const int enc_L_pin = 2;   // Motor A / LEFT
-const int enc_R_pin = 3;   // Motor B / RIGHT
+const int enc_R_pin = 18;  // Motor B / RIGHT
 const int pwma_pin = 11;   // PWM value sent to motor A   
 const int ain1_pin = 32;   // Logic input for rotational direction of motor A / LEFT
 const int ain2_pin = 30;   // Logic input for rotational direction of motor A / LEFT
@@ -79,11 +79,11 @@ void setup() {
   digitalWrite(stby_pin, HIGH);
 
   // Makes the left wheel go forward
-  digitalWrite(ain1_pin, HIGH);
-  digitalWrite(ain2_pin, LOW);
+  digitalWrite(ain1_pin, LOW);
+  digitalWrite(ain2_pin, HIGH);
   // Makes the right wheel go forward
-  digitalWrite(bin1_pin, HIGH);
-  digitalWrite(bin2_pin, LOW);
+  digitalWrite(bin1_pin, LOW);
+  digitalWrite(bin2_pin, HIGH);
   
  
   // PID CONTROL: activates PID control!  
@@ -121,7 +121,7 @@ void loop() {
   enc_speed_R = Filterconstant * enc_speed_R + (1.0f - Filterconstant) * enc_speed_R_RAW;
 
 
-  // PID Loop,
+  // PID Loop
   ROS_speed_L = abs(ROS_speed_L_in);  // gets the actual speed setpoint from ROS  
   LeftPID.Compute();                  // Calls a method in the PID library to compute the values
   analogWrite(pwma_pin, u_speed_L);   // sends output to PWM pin on motor
@@ -136,6 +136,14 @@ void loop() {
   Serial.print(" u_speed_L: ");
   Serial.print(u_speed_L);
   Serial.print(" ROS_speed_L_in ");
-  Serial.println(ROS_speed_L_in);
+  Serial.print(ROS_speed_L_in);
+  
+  // Prints values for monitoring 
+  Serial.print(" enc_speed_R: ");
+  Serial.print(enc_speed_R);
+  Serial.print(" u_speed_R: ");
+  Serial.print(u_speed_R);
+  Serial.print(" ROS_speed_R_in ");
+  Serial.println(ROS_speed_R_in);
     
 } // VOID LOOP ENDS
