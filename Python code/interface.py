@@ -44,7 +44,7 @@ def load_production_plan():
     return production_list
 
 
-def convert_to_color(part):
+def get_color(part):
     """ Returns the corresponding color of a specific part
 
         Arguments:
@@ -206,13 +206,17 @@ def load_interface(list_of_products, robot, assembly, qc):
     fail_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
     fail_entry.grid(row=2, column=14, columnspan=1, sticky='nsew')
 
-    # Creating robot slots
+    # Creates header for robot slots
     heading_robot = tkinter.Label(window, text='Robot inventory slots', relief='ridge', width=30, bg='#64b5f6')
     heading_robot.grid(row=3, column=13, columnspan=2, sticky='nsew')
+    # Starts a loop running for two counts
     for i in range(2):
+        # Tries to add the robot storage at place i to the interface
         try:
-            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=convert_to_color(robot.storage[i])).grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i])).grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+        # If there is nothing at the storage spot the program will return an index error
         except IndexError:
+            # It handles the error by setting the robot storage slot as empty in the interface then
             tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
 
     # Filler to make space between production schedule and slots
@@ -221,18 +225,23 @@ def load_interface(list_of_products, robot, assembly, qc):
     tkinter.Label(window, text=' ', width=1).grid(row=1, column=8, columnspan=1, sticky='nsew')
     tkinter.Label(window, text=' ', width=1).grid(row=1, column=12, columnspan=1, sticky='nsew')
 
-    # Creating assembly line slots
+    # Creates header for assembly line slots
     heading_assembly = tkinter.Label(window, text='Parts in assembly', relief='ridge', width=30, bg='#64b5f6')
     heading_assembly.grid(row=6, column=13, columnspan=2, sticky='nsew')
     column_counter = 13
     row_counter = 7
+    # Goes through all parts in the assembly line storage
     for part in assembly.storage:
-        tkinter.Label(window, text=part, relief='ridge', width=15, bg=convert_to_color(part)).grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        # Adds part from storage to the interface
+        tkinter.Label(window, text=part, relief='ridge', width=15, bg=get_color(part)).grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        # Making sure that they are shown in the right place
         if column_counter == 14:
             row_counter += 1
             column_counter = 12
+        # Increments the column counter
         column_counter += 1
 
+    # Returns the interface window
     return window
 
 
@@ -261,9 +270,11 @@ if __name__ == "__main__":
     # Creates an instance of type QualityControl with ID: 33
     quality_control = QualityControl(33)
 
+    # Adds to the robot storage for testing
     mc_turner.add_to_storage("C1")
     mc_turner.add_to_storage("C5")
 
+    # Loads the interface
     main_window = load_interface(product_list, mc_turner, assembly_line, quality_control)
+    # Runs the main loop
     run_main_loop(main_window)
-
