@@ -77,41 +77,49 @@ def start_button_callback(button):
     # TODO: Basically everything
 
 
-def pass_button_callback(window, pass_entry, list_of_products):
+def pass_button_callback(window, quality_c, pass_entry, list_of_products):
     """ Passes a product from QC when button is pressed
 
         Args:
             window (tkinter.Tk): The interface window to update
+            quality_c (QualityControl): The quality control unit changing the status
             pass_entry (tkinter.Entry): Entry field where the product ID is stored
             list_of_products (Product[list]): The list that contains the product to fail
         """
+    # Stores the input from the entry field as a string
     text_input = pass_entry.get()
+    # Clears the entry field
     pass_entry.delete(0, 'end')
 
+    # Goes through all the products to check if one of them matches the ID from the entry field
     for product in product_list:
         if str(product.id) == text_input:
-            # rospy.loginfo("Quality control failed product with id: " + text_input)
-            product.status = "Completed"
-            # UPDATE INTERFACE
+            # Call a QualityControl method to fail a product
+            quality_c.pass_product(product)
+            # Call a method to update the interface
             update_interface(window, list_of_products, "PRODUCTS")
 
 
-def fail_button_callback(window, fail_entry, list_of_products):
+def fail_button_callback(window, quality_c, fail_entry, list_of_products):
     """ Fails a product from QC when button is pressed
 
         Args:
             window (tkinter.Tk): The interface window to update
+            quality_c (QualityControl): The quality control unit changing the status
             fail_entry (tkinter.Entry): Entry field where the product ID is stored
             list_of_products (Product[list]): The list that contains the product to fail
         """
+    # Stores the input from the entry field as a string
     text_input = fail_entry.get()
+    # Clears the entry field
     fail_entry.delete(0, 'end')
 
+    # Goes through all the products to check if one of them matches the ID from the entry field
     for product in product_list:
         if str(product.id) == text_input:
-            # rospy.loginfo("Quality control failed product with id: " + text_input)
-            product.status = "Failed from QC"
-            # UPDATE INTERFACE
+            # Call a QualityControl method to fail a product
+            quality_c.fail_product(product)
+            # Call a method to update the interface
             update_interface(window, list_of_products, "PRODUCTS")
 
 
@@ -135,9 +143,9 @@ def update_interface(window, list_to_show, section):
             tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
             tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
             # Checks for the products status and changes the color accordingly
-            if list_to_show[i].status == "Completed":
+            if "Pass" in list_to_show[i].status:
                 tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-            elif list_to_show[i].status == "Failed from QC":
+            elif "Fail" in list_to_show[i].status:
                 tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
             elif list_to_show[i].status == "Ready for QC":
                 tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
@@ -147,11 +155,14 @@ def update_interface(window, list_to_show, section):
             row_counter += 1
 
 
-def load_interface(list_of_products, robot, assembly, qc):
+def load_interface(list_of_products, robot, assembly, quality_c):
     """ Creates the main window interface
 
         Args:
             list_of_products (Product[list]): Products to be loaded into the interface
+            robot (Robot): For displaying robot information in the interface
+            assembly (AssemblyLine): For displaying the assembly line information in the interface
+            quality_c (QualityControl): For failing and passing product from specific quality control unit
         """
     # Creating a main window for the user interface
     window = tkinter.Tk()
@@ -194,13 +205,13 @@ def load_interface(list_of_products, robot, assembly, qc):
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
-    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(window, pass_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(window, quality_c, pass_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     pass_button.grid(row=1, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     pass_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
     pass_entry.grid(row=1, column=14, columnspan=1, sticky='nsew')
     # Creating a button for failing a product
-    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(window, fail_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(window, quality_c, fail_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     fail_button.grid(row=2, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     fail_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
