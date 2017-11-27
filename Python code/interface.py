@@ -294,17 +294,6 @@ def load_interface(list_of_products, robot, assembly, quality_c):
             column_counter = 12
         # Increments the column counter
         column_counter += 1
-    """      
-    # Goes through all parts in the assembly line storage
-    for part in assembly.storage:
-        # Adds part from storage to the interface
-        tkinter.Label(window, text=part, relief='ridge', width=15, bg=get_color(part)).grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-        # Making sure that they are shown in the right place
-        if column_counter == 14:
-            row_counter += 1
-            column_counter = 12
-        # Increments the column counter
-        column_counter += 1"""
 
     # Returns the interface window
     return window
