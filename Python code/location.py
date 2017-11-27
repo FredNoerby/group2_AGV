@@ -7,7 +7,7 @@ class Location:
         orientation (float[list]): quaternion representing rotation
     """
     #TODO: EVERYTHING
-    def __init__(self, unique_id, position, orientation):
+    def __init__(self, unique_id, position=[0.0, 0.0, 0.0], orientation=[0.0, 0.0, 0.0, 1.0]):
         """ Location initialize method
 
             Arguments:
@@ -19,4 +19,5 @@ class Location:
         self.position = position
         self.orientation = orientation
 
-    translation = [x, y, z]
+    list1 = ['x', 'y', 'z']
+
