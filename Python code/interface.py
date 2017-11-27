@@ -68,13 +68,15 @@ def get_color(part):
         return "#e0e0e0"
 
 
-def start_button_callback(button):
+def start_button_callback(button, window, robot, assembly):
     """ Starts the daily production when the button is pressed
         """
 
     # Disables the button once it is pressed
     button['state'] = 'disabled'
-    # TODO: Basically everything
+    del assembly.storage[:]
+    del robot.storage[:]
+    update_interface_storages(window, robot, assembly)
 
 
 def pass_button_callback(window, quality_c, pass_entry, list_of_products):
@@ -97,7 +99,7 @@ def pass_button_callback(window, quality_c, pass_entry, list_of_products):
             # Call a QualityControl method to fail a product
             quality_c.pass_product(product)
             # Call a method to update the interface
-            update_interface(window, list_of_products, "PRODUCTS")
+            update_interface_products(window, list_of_products)
 
 
 def fail_button_callback(window, quality_c, fail_entry, list_of_products):
@@ -120,39 +122,75 @@ def fail_button_callback(window, quality_c, fail_entry, list_of_products):
             # Call a QualityControl method to fail a product
             quality_c.fail_product(product)
             # Call a method to update the interface
-            update_interface(window, list_of_products, "PRODUCTS")
+            update_interface_products(window, list_of_products,)
 
 
-def update_interface(window, list_to_show, section):
+def update_interface_products(window, list_to_show):
     """ Updates the interface
 
         Args:
             window (tkinter.Tk): The interface window to update
-            list_to_show (list): List of products or parts
-            section (string): Section of interface to update
+            list_to_show (list): List of products to show
         """
-    if section == "PRODUCTS":
-        column_counter = 1
-        row_counter = 2
-        # Goes through the list and adds each product to the interface
-        for i in range(len(list_to_show)):
-            if i == 35 or i == 70:
-                column_counter += 4
-                row_counter = 2
 
-            tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-            tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
-            # Checks for the products status and changes the color accordingly
-            if "Pass" in list_to_show[i].status:
-                tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-            elif "Fail" in list_to_show[i].status:
-                tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-            elif list_to_show[i].status == "Ready for QC":
-                tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-            else:
-                tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-            # Increment the row counter by one
+    column_counter = 1
+    row_counter = 2
+    # Goes through the list and adds each product to the interface
+    for i in range(len(list_to_show)):
+        if i == 35 or i == 70:
+            column_counter += 4
+            row_counter = 2
+
+        tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
+        # Checks for the products status and changes the color accordingly
+        if "Pass" in list_to_show[i].status:
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+        elif "Fail" in list_to_show[i].status:
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+        elif list_to_show[i].status == "Ready for QC":
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+        else:
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+        # Increment the row counter by one
+        row_counter += 1
+
+
+def update_interface_storages(window, robot, assembly):
+    """ Updates the interface
+
+        Args:
+            window (tkinter.Tk): The interface window to update
+            robot (Robot): Robot with storage to show
+            assembly (AssemblyLine): Assembly line with storage to show
+        """
+    # Starts a loop running for two counts
+    for i in range(2):
+        # Tries to add the robot storage at place i to the interface
+        try:
+            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i])).grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+        # If there is nothing at the storage spot the program will return an index error
+        except IndexError:
+            # It handles the error by setting the robot storage slot as empty in the interface then
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+
+    # Counters for rows and columns
+    row_counter = 7
+    column_counter = 13
+    # Starts a loop running for two counts
+    for i in range(15):
+        # Tries to add the assembly line storage at place i to the interface
+        try:
+            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+        # If there is nothing at the storage spot the program will return an index error
+        except IndexError:
+            # It handles the error by setting the assembly line storage slot as empty in the interface then
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+        if column_counter == 14:
             row_counter += 1
+            column_counter = 12
+        # Increments the column counter
+        column_counter += 1
 
 
 def load_interface(list_of_products, robot, assembly, quality_c):
@@ -201,7 +239,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
         row_counter += 1
 
     # Creating a button for sending production schedule to robot
-    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
+    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
@@ -239,8 +277,24 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     # Creates header for assembly line slots
     heading_assembly = tkinter.Label(window, text='Parts in assembly', relief='ridge', width=30, bg='#64b5f6')
     heading_assembly.grid(row=6, column=13, columnspan=2, sticky='nsew')
-    column_counter = 13
+
     row_counter = 7
+    column_counter = 13
+    # Starts a loop running for two counts
+    for i in range(15):
+        # Tries to add the robot storage at place i to the interface
+        try:
+            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+        # If there is nothing at the storage spot the program will return an index error
+        except IndexError:
+            # It handles the error by setting the robot storage slot as empty in the interface then
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=(7+i-zero_to_one), column=(zero_to_one+13), columnspan=1, sticky='nsew')
+        if column_counter == 14:
+            row_counter += 1
+            column_counter = 12
+        # Increments the column counter
+        column_counter += 1
+    """      
     # Goes through all parts in the assembly line storage
     for part in assembly.storage:
         # Adds part from storage to the interface
@@ -250,7 +304,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
             row_counter += 1
             column_counter = 12
         # Increments the column counter
-        column_counter += 1
+        column_counter += 1"""
 
     # Returns the interface window
     return window
@@ -274,9 +328,9 @@ if __name__ == "__main__":
     # Creates an instance of type Robot with ID: 20
     mc_turner = Robot(20)
 
-    ass_stor = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5", "C6", "C1", "C2", "C3", "C4", "C5", "C6"]
+    ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
     # Creates an instance of type AssemblyLine with ID: 11 and Location: ??
-    assembly_line = AssemblyLine(11, "location", ass_stor)
+    assembly_line = AssemblyLine(11, "location", ass_store)
 
     # Creates an instance of type QualityControl with ID: 33
     quality_control = QualityControl(33)
