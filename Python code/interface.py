@@ -284,11 +284,11 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     for i in range(15):
         # Tries to add the robot storage at place i to the interface
         try:
-            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         # If there is nothing at the storage spot the program will return an index error
         except IndexError:
-            # It handles the error by setting the robot storage slot as empty in the interface then
-            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=(7+i-zero_to_one), column=(zero_to_one+13), columnspan=1, sticky='nsew')
+            # It handles the error by setting the assembly line storage slot as empty in the interface then
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         if column_counter == 14:
             row_counter += 1
             column_counter = 12
