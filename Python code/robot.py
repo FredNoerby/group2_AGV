@@ -16,7 +16,7 @@ class Robot:
         # Storage is empty when the robot is initialized
         self.storage = []
 
-    def add_part_to_storage(self, part):
+    def add_to_storage(self, part):
         """ Adds a part to the robots storage
 
         Args:
@@ -64,6 +64,6 @@ if __name__ == '__main__':
     # Creates an Robot object with the ID of 99
     mc_turner = Robot(99)
 
-    print(mc_turner.add_part_to_storage("C1"))
-    print(mc_turner.add_part_to_storage("C1"))
-    print(mc_turner.add_part_to_storage("C1"))
+    print(mc_turner.add_to_storage("C1"))
+    print(mc_turner.add_to_storage("C1"))
+    print(mc_turner.add_to_storage("C1"))
