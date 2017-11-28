@@ -349,7 +349,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
 
 
 def run_interface(window):
-    """ Runs the main loop for a window
+    """ Runs the interface window
 
         Args:
             window (tkinter.Tk): The window to run main loop for
