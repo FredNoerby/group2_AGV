@@ -44,6 +44,20 @@ def load_production_plan():
     return production_list
 
 
+def get_next_task(list_of_products):
+    """ Goes through a list of products and returns the first non-complete products ID from the list.
+        Returns 'none' if all products are done.
+
+        Arguments:
+            list_of_products (Product[list]): List of Products to check for next non-complete
+        """
+    for product in list_of_products:
+        if "Pass" not in product.status:
+            return product.id
+
+    return "none"
+
+
 def get_color(part):
     """ Returns the corresponding color of a specific part
 
@@ -68,15 +82,23 @@ def get_color(part):
         return "#e0e0e0"
 
 
-def start_button_callback(button, window, robot, assembly):
+def start_button_callback(button, window, robot, assembly, quality_c, list_of_products):
     """ Starts the daily production when the button is pressed
         """
 
     # Disables the button once it is pressed
     button['state'] = 'disabled'
-    del assembly.storage[:]
-    del robot.storage[:]
-    update_interface_storages(window, robot, assembly)
+
+    # Boolean used to check if all the products for production has been made:
+    more_to_make = True
+    while more_to_make:
+        window.update()
+        first_uncomplete_id = get_next_task(list_of_products)
+        if first_uncomplete_id == "none":
+            more_to_make = False
+
+    tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
+        .grid(row=1, column=0, columnspan=12, rowspan=34, sticky='nsew')
 
 
 def pass_button_callback(window, quality_c, pass_entry, list_of_products):
@@ -141,17 +163,23 @@ def update_interface_products(window, list_to_show):
             column_counter += 4
             row_counter = 2
 
-        tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0')\
+            .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0')\
+            .grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
         # Checks for the products status and changes the color accordingly
         if "Pass" in list_to_show[i].status:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f')\
+                .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         elif "Fail" in list_to_show[i].status:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e')\
+                .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         elif list_to_show[i].status == "Ready for QC":
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b')\
+                .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         else:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#e0e0e0')\
+                .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         # Increment the row counter by one
         row_counter += 1
 
@@ -168,11 +196,13 @@ def update_interface_storages(window, robot, assembly):
     for i in range(2):
         # Tries to add the robot storage at place i to the interface
         try:
-            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i])).grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i]))\
+                .grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
         # If there is nothing at the storage spot the program will return an index error
         except IndexError:
             # It handles the error by setting the robot storage slot as empty in the interface then
-            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0")\
+                .grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
 
     # Counters for rows and columns
     row_counter = 7
@@ -181,11 +211,13 @@ def update_interface_storages(window, robot, assembly):
     for i in range(15):
         # Tries to add the assembly line storage at place i to the interface
         try:
-            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i]))\
+                .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         # If there is nothing at the storage spot the program will return an index error
         except IndexError:
             # It handles the error by setting the assembly line storage slot as empty in the interface then
-            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=(row_counter), column=(column_counter), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0")\
+                .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         if column_counter == 14:
             row_counter += 1
             column_counter = 12
@@ -210,19 +242,29 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     window.geometry("{0}x{1}+0+0".format(window.winfo_screenwidth(), window.winfo_screenheight()))
 
     # Creates a header for the production schedule
-    heading = tkinter.Label(window, text='Daily production schedule', relief='ridge', width=30, bg='#2286c3', fg='#ffffff')
+    heading = tkinter\
+        .Label(window, text='Daily production schedule', relief='ridge', width=30, bg='#2286c3', fg='#ffffff')
     heading.grid(row=0, column=1, columnspan=11, sticky='nsew')
 
     # Creates sub-headers for products and statuses
-    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=1, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=5, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6').grid(row=1, column=9, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=2, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=6, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6').grid(row=1, column=10, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=3, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=7, columnspan=1, sticky='nsew')
-    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6').grid(row=1, column=11, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6')\
+        .grid(row=1, column=1, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6')\
+        .grid(row=1, column=5, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='ID', relief='ridge', width=5, bg='#64b5f6')\
+        .grid(row=1, column=9, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6')\
+        .grid(row=1, column=2, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6')\
+        .grid(row=1, column=6, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Product', relief='ridge', width=10, bg='#64b5f6')\
+        .grid(row=1, column=10, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6')\
+        .grid(row=1, column=3, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6')\
+        .grid(row=1, column=7, columnspan=1, sticky='nsew')
+    tkinter.Label(window, text='Status', relief='ridge', width=15, bg='#64b5f6')\
+        .grid(row=1, column=11, columnspan=1, sticky='nsew')
 
     # rospy.loginfo("Loading in production plan..")
     column_counter = 1
@@ -233,13 +275,16 @@ def load_interface(list_of_products, robot, assembly, quality_c):
             column_counter += 4
             row_counter = 2
 
-        tkinter.Label(window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter + 1, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter + 2, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0')\
+            .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0')\
+            .grid(row=row_counter, column=column_counter + 1, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0')\
+            .grid(row=row_counter, column=column_counter + 2, columnspan=1, sticky='nsew')
         row_counter += 1
 
     # Creating a button for sending production schedule to robot
-    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
+    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, quality_c, list_of_products), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
@@ -262,11 +307,13 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     for i in range(2):
         # Tries to add the robot storage at place i to the interface
         try:
-            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i])).grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=robot.storage[i], relief='ridge', width=15, bg=get_color(robot.storage[i]))\
+                .grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
         # If there is nothing at the storage spot the program will return an index error
         except IndexError:
             # It handles the error by setting the robot storage slot as empty in the interface then
-            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0")\
+                .grid(row=4, column=(i+13), columnspan=1, sticky='nsew')
 
     # Filler to make space between production schedule and slots
     tkinter.Label(window, text=' ', width=1).grid(row=1, column=0, columnspan=1, sticky='nsew')
@@ -284,11 +331,13 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     for i in range(15):
         # Tries to add the robot storage at place i to the interface
         try:
-            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i])).grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text=assembly.storage[i], relief='ridge', width=15, bg=get_color(assembly.storage[i]))\
+                .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         # If there is nothing at the storage spot the program will return an index error
         except IndexError:
             # It handles the error by setting the assembly line storage slot as empty in the interface then
-            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0").grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+            tkinter.Label(window, text="EMPTY", relief='ridge', width=15, bg="#e0e0e0")\
+                .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
         if column_counter == 14:
             row_counter += 1
             column_counter = 12
@@ -312,8 +361,8 @@ def run_main_loop(window):
 if __name__ == "__main__":
 
     # Creates a list of type Product with the types from the excel file
-    product_list = load_production_plan()
-
+    # product_list = load_production_plan()
+    product_list = [Product(1, "P1"), Product(2, "P1"), Product(3, "P1"), Product(4, "P1"), Product(5, "P1")]
     # Creates an instance of type Robot with ID: 20
     mc_turner = Robot(20)
 
