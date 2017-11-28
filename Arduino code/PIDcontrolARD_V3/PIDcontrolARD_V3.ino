@@ -1,4 +1,6 @@
 #include <PID_v1.h>
+#include <ros.h>
+#include <std_msgs/Int16.h>
 
 // Autonomous Systems Msc Engineering, Autmn 2017, AAU, DK 
 // Inspiration for code found in: https://gist.github.com/ShawnHymel/1de08ffaca990b65fade81cb8d01a44a
@@ -55,6 +57,17 @@ void countRight() {
   enc_R++;
 }
 
+//--------------------------------------------
+// Code for a subcriber function
+ros::NodeHandle  nh;
+
+void messageCb( const std_msgs::Int16& toggle_msg){
+  digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+}
+
+ros::Subscriber<std_msgs::Int16> sub("toggle_led", &messageCb );
+
+
 //Setup initiates the Arduino before the loop is run
 void setup() {
   // Setup of the baud rate
@@ -100,6 +113,12 @@ void setup() {
   // Hardcoded testing values
   ROS_speed_L_in = 200;
   ROS_speed_R_in = 200;
+
+
+  //----- subcriber 
+  pinMode(13, OUTPUT);
+  nh.initNode();
+  nh.subscribe(sub);
   
   
 }//VOID SETUP ENDS
@@ -145,5 +164,6 @@ void loop() {
   Serial.print(u_speed_R);
   Serial.print(" ROS_speed_R_in ");
   Serial.println(ROS_speed_R_in);
-    
+    nh.spinOnce();
+      
 } // VOID LOOP ENDS
