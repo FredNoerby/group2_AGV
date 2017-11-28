@@ -348,7 +348,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
     return window
 
 
-def run_main_loop(window):
+def run_interface(window):
     """ Runs the main loop for a window
 
         Args:
@@ -380,4 +380,4 @@ if __name__ == "__main__":
     # Loads the interface
     main_window = load_interface(product_list, mc_turner, assembly_line, quality_control)
     # Runs the main loop
-    run_main_loop(main_window)
+    run_interface(main_window)
