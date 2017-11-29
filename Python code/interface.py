@@ -45,11 +45,11 @@ def load_production_plan():
 
 
 def get_next_task(list_of_products):
-    """ Goes through a list of products and returns the first non-complete products ID from the list.
+    """ Goes through a list of products and returns the first incomplete products ID from the list.
         Returns 'none' if all products are done.
 
         Arguments:
-            list_of_products (Product[list]): List of Products to check for next non-complete
+            list_of_products (Product[list]): List of Products to check for next incomplete
         """
     for product in list_of_products:
         if "Pass" not in product.status:
@@ -92,9 +92,11 @@ def start_button_callback(button, window, robot, assembly, quality_c, list_of_pr
     # Boolean used to check if all the products for production has been made:
     more_to_make = True
     while more_to_make:
+        # Updates interface window
         window.update()
-        first_uncomplete_id = get_next_task(list_of_products)
-        if first_uncomplete_id == "none":
+        # Gets first incomplete product ID in list
+        first_incomplete_id = get_next_task(list_of_products)
+        if first_incomplete_id == "none":
             more_to_make = False
 
     tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
@@ -184,7 +186,7 @@ def update_interface_products(window, list_to_show):
         row_counter += 1
 
 
-def update_interface_storages(window, robot, assembly):
+def update_interface_storage(window, robot, assembly):
     """ Updates the interface
 
         Args:
