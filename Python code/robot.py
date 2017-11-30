@@ -64,7 +64,7 @@ class Robot:
         """
         # TODO: unload parts at assembly line
 
-    def go_to_location(self, location):
+    def go_to(self, location):
         """ Sends the robot to a specific location
 
         Args:
