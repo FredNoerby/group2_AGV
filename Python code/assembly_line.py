@@ -61,7 +61,12 @@ class AssemblyLine:
         Args:
             product (Product): A product to assemble
         """
-        # TODO: Assemble the product
+        for part in product.parts:
+            if part in self.storage:
+                self.storage.remove(part)
+
+        print("Product with ID: " + str(product.id) + " assembled in assembly line " + str(self.id))
+        product.status = "Ready for QC"
 
 
 # Will only run if this is the main file being run
