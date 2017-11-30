@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-#import rospy
+# import rospy
 # from std_msgs.msg import String
 import openpyxl
 from product import Product
 from robot import Robot
 from assembly_line import AssemblyLine
 from quality_control import QualityControl
+from location import Location
 try:
     import tkinter
 except ImportError:  # python 2
@@ -51,10 +52,21 @@ def get_next_task(list_of_products):
         Arguments:
             list_of_products (Product[list]): List of Products to check for next incomplete
         """
+    count = 0
+    # Goes through the products in the list
     for product in list_of_products:
-        if "Pass" not in product.status:
-            return product.id
-
+        # If the product does not have 'Pass' in its status the product is returned
+        if "Waiting" in product.status or "Fail" in product.status:
+            print("Got product.id " + str(product.id))
+            return product
+        # Counts products ready for QC
+        elif "Ready" in product.status:
+            count += 1
+    # Returns 'some' if all products are assembled but not all have passed yet
+    if count > 0:
+        print(str(count) + " waiting to be graded from QC")
+        return "some"
+    # If all the products in the list have pass in their status 'none' is returned
     return "none"
 
 
@@ -82,7 +94,7 @@ def get_color(part):
         return "#e0e0e0"
 
 
-def start_button_callback(button, window, robot, assembly, quality_c, list_of_products):
+def start_button_callback(button, window, robot, assembly, list_of_products):
     """ Starts the daily production when the button is pressed
         """
 
@@ -95,12 +107,69 @@ def start_button_callback(button, window, robot, assembly, quality_c, list_of_pr
         # Updates interface window
         window.update()
         # Gets first incomplete product ID in list
-        first_incomplete_id = get_next_task(list_of_products)
-        if first_incomplete_id == "none":
+        first_incomplete = get_next_task(list_of_products)
+        # If all are done and passed exit the while loop
+        if first_incomplete == "none":
+            # Sets boolean more_to_make to False
             more_to_make = False
+        # If all products are done but not passed from QC pass
+        elif first_incomplete == "some":
+            pass
+        else:
+            # Updates interface window
+            window.update()
+            # Checks assembly line storage for parts
+            assembly_missing = assembly.check_storage_for(first_incomplete.parts)
+            # Enters if the assembly line has all parts to make product
+            if assembly_missing == "none":
+                # Calls assembly line method to assemble product
+                assembly.assemble(first_incomplete)
+                # Updates the interfaces different sections
+                update_interface_products(window, list_of_products)
+                update_interface_storage(window, robot, assembly)
+                # Updates interface window
+                window.update()
+            else:
+                # Updates interface window
+                window.update()
+                # Check if the robot has some of the missing parts
+                robot_missing = robot.check_storage_for(assembly_missing)
+                # If robot has all missing parts go to assembly station
+                if robot_missing == "none":
+                    # Calls method to drive robot to assembly station
+                    robot.go_to(assembly.location)
+                    # Unloads parts at assembly station
+                    robot.unload_parts(assembly)
+                else:
+                    # Gets the location of the part
+                    pickup_location = get_pickup_location_for(robot_missing[0])
+                    # Calls method to drive robot to pick-up location
+                    robot.go_to(pickup_location)
 
+    # Changes interface to display message that production is done
     tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
         .grid(row=1, column=0, columnspan=12, rowspan=34, sticky='nsew')
+    print("Daily production done")
+
+
+def get_pickup_location_for(part):
+    """ Returns the pickup location of a type of parts
+
+        Args: part (str): Part to get location for
+        """
+
+    # Dictionary of products
+    location_dict = {"C1": Location(1),
+                     "C2": Location(2),
+                     "C3": Location(3),
+                     "C4": Location(4),
+                     "C5": Location(5),
+                     "C6": Location(6)}
+
+    # Checks if the part is in the dictionary
+    if part in location_dict:
+        # Returns the location of the part
+        return location_dict[part]
 
 
 def pass_button_callback(window, quality_c, pass_entry, list_of_products):
@@ -286,7 +355,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
         row_counter += 1
 
     # Creating a button for sending production schedule to robot
-    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, quality_c, list_of_products), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
+    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, list_of_products), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
@@ -364,11 +433,12 @@ if __name__ == "__main__":
 
     # Creates a list of type Product with the types from the excel file
     # product_list = load_production_plan()
-    product_list = [Product(1, "P1"), Product(2, "P1"), Product(3, "P1"), Product(4, "P1"), Product(5, "P1")]
+    product_list = [Product(1, "P1"), Product(2, "P2"), Product(3, "P3"), Product(4, "P4"), Product(5, "P1"), Product(6, "P1"), Product(7, "P2"), Product(8, "P3"), Product(9, "P4"), Product(10, "P1"), Product(11, "P1"), Product(12, "P2"), Product(13, "P3"), Product(14, "P4"), Product(15, "P1")]
     # Creates an instance of type Robot with ID: 20
     mc_turner = Robot(20)
 
     ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
+    # ass_store = ["C1"]
     # Creates an instance of type AssemblyLine with ID: 11 and Location: ??
     assembly_line = AssemblyLine(11, "location", ass_store)
 
