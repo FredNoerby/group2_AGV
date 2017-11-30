@@ -50,7 +50,10 @@ class AssemblyLine:
             else:
                 temp.remove(part)
         # Returns the parts still needed
-        return still_needed
+        if still_needed:
+            return still_needed
+        else:
+            return "none"
 
     def assemble(self, product):
         """ Assemble specific product
