@@ -32,6 +32,30 @@ class Robot:
             # Returns message that robot is full
             return"Robot with id: " + str(self.id) + " is full"
 
+    def check_storage_for(self, parts_list):
+        """ Checks the assembly line storage for a list of parts and returns missing parts
+
+        Args:
+            parts_list (str[list]): List of the parts to check for
+        """
+        # Used for storing which parts are still missing
+        still_needed = []
+        # Creates a cloned list of what is in storage
+        temp = list(self.storage)
+        # Goes through the parts in the list
+        for part in parts_list:
+            # If the part is not in storage append it to the still needed list
+            if part not in temp:
+                still_needed.append(part)
+            # If the part is in storage remove it from the temporary storage clone
+            else:
+                temp.remove(part)
+        # Returns the parts still needed
+        if still_needed:
+            return still_needed
+        else:
+            return "none"
+
     def unload_parts(self, assembly_line):
         """ Unloads parts at specific assembly line
 
