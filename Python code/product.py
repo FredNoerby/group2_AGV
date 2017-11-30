@@ -6,7 +6,6 @@ class Product:
         type (str): The type of product (P1, P2, P3, or P4)
         parts (str[list]): The parts the product consists of
         status (str): The current state of the product
-        parts_to_fetch (str[list]): The parts needed to assembly the product
     """
 
     def __init__(self, unique_id, type_of_product, status="Waiting"):
@@ -22,8 +21,6 @@ class Product:
         self.status = status
         # The parts needed to make the product is fetched from the convertProductsToParts library
         self.parts = self.return_parts()
-        # The parts still missing to make the product is initially all
-        self.parts_to_fetch = self.parts
 
     def return_parts(self):
         """ Returns the parts of a specific product type
@@ -50,4 +47,3 @@ if __name__ == '__main__':
     print(new_product.type)
     print(new_product.parts)
     print(new_product.status)
-    print(new_product.parts_to_fetch)

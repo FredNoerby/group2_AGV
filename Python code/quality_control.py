@@ -22,7 +22,7 @@ class QualityControl:
              product (Product) : product to pass
         """
 
-        product.status = "Pass from QC " + str(self.id)
+        product.status = "Passed from QC " + str(self.id)
 
     def fail_product(self, product):
         """ Changes status of product to 'failed'
