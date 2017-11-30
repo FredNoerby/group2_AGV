@@ -62,7 +62,11 @@ class Robot:
         Args:
             assembly_line (AssemblyLine): Where the parts should be unloaded
         """
-        # TODO: unload parts at assembly line
+        # Goes through the robot's storage and adds the parts to the assembly line
+        for part in self.storage:
+            print(assembly_line.add_part_to_storage(part))
+        # Clears the robot's storage
+        self.storage[:] = []
 
     def go_to(self, location):
         """ Sends the robot to a specific location
