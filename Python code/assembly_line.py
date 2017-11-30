@@ -31,6 +31,27 @@ class AssemblyLine:
         self.storage.append(part)
         return "Stored " + part + " in assembly line with id: " + str(self.id)
 
+    def check_storage_for(self, parts_list):
+        """ Checks the assembly line storage for a list of parts and returns missing parts
+
+        Args:
+            parts_list (str[list]): List of the parts to check for
+        """
+        # Used for storing which parts are still missing
+        still_needed = []
+        # Creates a cloned list of what is in storage
+        temp = list(self.storage)
+        # Goes through the parts in the list
+        for part in parts_list:
+            # If the part is not in storage append it to the still needed list
+            if part not in temp:
+                still_needed.append(part)
+            # If the part is in storage remove it from the temporary storage clone
+            else:
+                temp.remove(part)
+        # Returns the parts still needed
+        return still_needed
+
     def assemble(self, product):
         """ Assemble specific product
 
@@ -49,6 +70,14 @@ if __name__ == '__main__':
     print(assembly_line_copenhagen.location)
     print(assembly_line_copenhagen.storage)
     print(assembly_line_copenhagen.add_part_to_storage("C1"))
-    print(assembly_line_copenhagen.add_part_to_storage("C1"))
-    print(assembly_line_copenhagen.add_part_to_storage("C1"))
+    print(assembly_line_copenhagen.add_part_to_storage("C4"))
+    print(assembly_line_copenhagen.add_part_to_storage("C3"))
+    print(assembly_line_copenhagen.add_part_to_storage("C2"))
+    print("In storage:", end=" ")
     print(assembly_line_copenhagen.storage)
+
+    list_parts = ["C1", "C2", "C3", "C4", "C2"]
+    print("Check if storage has the following:", end=" ")
+    print(list_parts)
+    print("Storage is missing:", end=" ")
+    print(assembly_line_copenhagen.check_storage_for(list_parts))
