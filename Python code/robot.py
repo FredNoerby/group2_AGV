@@ -64,7 +64,7 @@ class Robot:
         """
         # Goes through the robot's storage and adds the parts to the assembly line
         for part in self.storage:
-            print(assembly_line.add_part_to_storage(part))
+            print(assembly_line.add_to_storage(part))
         # Clears the robot's storage
         self.storage[:] = []
 

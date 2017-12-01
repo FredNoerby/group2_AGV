@@ -20,7 +20,7 @@ class AssemblyLine:
         self.storage = in_storage
         self.location = location
 
-    def add_part_to_storage(self, part):
+    def add_to_storage(self, part):
         """ Adds a part to the assembly lines storage
 
         Args:
@@ -75,10 +75,10 @@ if __name__ == '__main__':
     print(assembly_line_copenhagen.id)
     print(assembly_line_copenhagen.location)
     print(assembly_line_copenhagen.storage)
-    print(assembly_line_copenhagen.add_part_to_storage("C1"))
-    print(assembly_line_copenhagen.add_part_to_storage("C4"))
-    print(assembly_line_copenhagen.add_part_to_storage("C3"))
-    print(assembly_line_copenhagen.add_part_to_storage("C2"))
+    print(assembly_line_copenhagen.add_to_storage("C1"))
+    print(assembly_line_copenhagen.add_to_storage("C4"))
+    print(assembly_line_copenhagen.add_to_storage("C3"))
+    print(assembly_line_copenhagen.add_to_storage("C2"))
     print("In storage:", end=" ")
     print(assembly_line_copenhagen.storage)
 
