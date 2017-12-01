@@ -54,7 +54,7 @@ class AssemblyLine:
             return "none"
 
     def assemble(self, product):
-        """ Assemble specific product
+        """ Assembles specific product
 
         Args:
             product (Product): A product to assemble

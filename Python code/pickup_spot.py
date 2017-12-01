@@ -3,8 +3,8 @@ class PickupSpot:
 
     Attributes:
         id (int): A unique number for identifying a pickup spot
-        type (str): Type of components to pickup at location
-        location (Location): Where the pick up spot is located
+        type (str): Type of components to pick up at location
+        location (Location): Where the pickup spot is located
         storage (int): How many components that the pickup spot has stored
     """
 
@@ -12,7 +12,7 @@ class PickupSpot:
         """ Location initialize method
 
             Arguments:
-                id (int): Initializes the ID of the pick up spot
+                id (int): Initializes the ID of the pickup spot
                 type (str): Sets the type of components to pick up at location
                 location (Location): Initializes the location of the pickup spot
                 in_storage (Optional(int)): Initializes number of components in storage
