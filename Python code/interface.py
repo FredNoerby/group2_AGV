@@ -159,12 +159,12 @@ def get_pickup_location_for(part):
         """
 
     # Dictionary of products
-    location_dict = {"C1": Location(1),
-                     "C2": Location(2),
-                     "C3": Location(3),
-                     "C4": Location(4),
-                     "C5": Location(5),
-                     "C6": Location(6)}
+    location_dict = {"C1": Location(),
+                     "C2": Location(),
+                     "C3": Location(),
+                     "C4": Location(),
+                     "C5": Location(),
+                     "C6": Location()}
 
     # Checks if the part is in the dictionary
     if part in location_dict:

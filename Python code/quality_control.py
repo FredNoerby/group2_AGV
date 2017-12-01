@@ -11,8 +11,9 @@ class QualityControl:
     def __init__(self, unique_id):
         """ Quality control init method
 
-    Args:
-        unique_id (int): Initializes the product ID"""
+        Args:
+            unique_id (int): Initializes the product ID
+        """
         self.id = unique_id
 
     def pass_product(self, product):
