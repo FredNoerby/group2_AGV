@@ -20,9 +20,9 @@ class Product:
         self.type = type_of_product
         self.status = status
         # The parts needed to make the product is fetched from the convertProductsToParts library
-        self.parts = self.return_parts()
+        self.parts = self.get_parts()
 
-    def return_parts(self):
+    def get_parts(self):
         """ Returns the parts of a specific product type
         """
 
