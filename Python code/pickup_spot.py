@@ -1,5 +1,5 @@
 class PickupSpot:
-    """ Class to represent locations in the map
+    """ Class to represent pickup spots for components.
 
     Attributes:
         id (int): A unique number for identifying a pickup spot
