@@ -16,55 +16,55 @@ class Robot:
         # Storage is empty when the robot is initialized
         self.storage = []
 
-    def add_to_storage(self, part):
-        """ Adds a part to the robots storage
+    def add_to_storage(self, component):
+        """ Adds a component to the robots storage
 
         Args:
-            part (str): A part to add to storage
+            component (str): A part to add to storage
         """
 
         # Checks if the robot is already full
         if len(self.storage) < 2:
-            # Adds the part to the robots storage
-            self.storage.append(part)
-            return "Added " + part + " to robot with id: " + str(self.id)
+            # Adds the component to the robots storage
+            self.storage.append(component)
+            return "Added " + component + " to robot with id: " + str(self.id)
         else:
             # Returns message that robot is full
             return"Robot with id: " + str(self.id) + " is full"
 
-    def check_storage_for(self, parts_list):
-        """ Checks the assembly line storage for a list of parts and returns missing parts
+    def check_storage_for(self, component_list):
+        """ Checks the assembly line storage for a list of parts and returns missing components
 
         Args:
-            parts_list (str[list]): List of the parts to check for
+            component_list (str[list]): List of the components to check for
         """
-        # Used for storing which parts are still missing
+        # Used for storing which components are still missing
         still_needed = []
         # Creates a cloned list of what is in storage
         temp = list(self.storage)
-        # Goes through the parts in the list
-        for part in parts_list:
-            # If the part is not in storage append it to the still needed list
-            if part not in temp:
-                still_needed.append(part)
-            # If the part is in storage remove it from the temporary storage clone
+        # Goes through the components in the list
+        for component in component_list:
+            # If the component is not in storage append it to the still needed list
+            if component not in temp:
+                still_needed.append(component)
+            # If the component is in storage remove it from the temporary storage clone
             else:
-                temp.remove(part)
-        # Returns the parts still needed
+                temp.remove(component)
+        # Returns the components still needed
         if still_needed:
             return still_needed
         else:
             return "none"
 
-    def unload_parts(self, assembly_line):
-        """ Unloads parts at specific assembly line
+    def unload_components(self, assembly_line):
+        """ Unloads components at specific assembly line
 
         Args:
-            assembly_line (AssemblyLine): Where the parts should be unloaded
+            assembly_line (AssemblyLine): Where the components should be unloaded
         """
-        # Goes through the robot's storage and adds the parts to the assembly line
-        for part in self.storage:
-            print(assembly_line.add_to_storage(part))
+        # Goes through the robot's storage and adds the components to the assembly line
+        for component in self.storage:
+            print(assembly_line.add_to_storage(component))
         # Clears the robot's storage
         self.storage[:] = []
 

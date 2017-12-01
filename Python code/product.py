@@ -4,7 +4,7 @@ class Product:
     Attributes:
         id (int): A unique number for identifying products
         type (str): The type of product (P1, P2, P3, or P4)
-        parts (str[list]): The parts the product consists of
+        components (str[list]): The components the product consists of
         status (str): The current state of the product
     """
 
@@ -20,10 +20,10 @@ class Product:
         self.type = type_of_product
         self.status = status
         # The parts needed to make the product is fetched from the convertProductsToParts library
-        self.parts = self.get_parts()
+        self.components = self.get_components()
 
-    def get_parts(self):
-        """ Returns the parts of a specific product type
+    def get_components(self):
+        """ Returns the components of a specific product type
         """
 
         # Dictionary of products
@@ -34,7 +34,7 @@ class Product:
 
         # Checks if the type is in the dictionary
         if self.type in product_dict:
-            # Returns the parts needed for the product
+            # Returns the components needed for the product
             return product_dict[self.type]
 
 # Will only run if this is the main file being run
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     # Prints all the stored information for the Product object
     print(new_product.id)
     print(new_product.type)
-    print(new_product.parts)
+    print(new_product.components)
     print(new_product.status)

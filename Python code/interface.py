@@ -70,11 +70,11 @@ def get_next_task(list_of_products):
     return "none"
 
 
-def get_color(part):
-    """ Returns the corresponding color of a specific part
+def get_color(component):
+    """ Returns the corresponding color of a specific component
 
         Arguments:
-            part (str): Part to get color for
+            component (str): Component to get color for
         """
 
     # Dictionary of colors
@@ -85,10 +85,10 @@ def get_color(part):
                   "C5": ["#f2ca21"],
                   "C6": ["#df4949"]}
 
-    # Checks if the part is in the color dictionary
-    if part in color_dict:
+    # Checks if the component is in the color dictionary
+    if component in color_dict:
         # Returns color if it's in the dictionary
-        return color_dict[part]
+        return color_dict[component]
     else:
         # Else returns a grey color
         return "#e0e0e0"
@@ -118,9 +118,9 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
         else:
             # Updates interface window
             window.update()
-            # Checks assembly line storage for parts
-            assembly_missing = assembly.check_storage_for(first_incomplete.parts)
-            # Enters if the assembly line has all parts to make product
+            # Checks assembly line storage for components
+            assembly_missing = assembly.check_storage_for(first_incomplete.components)
+            # Enters if the assembly line has all components to make product
             if assembly_missing == "none":
                 # Calls assembly line method to assemble product
                 assembly.assemble(first_incomplete)
@@ -132,16 +132,16 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
             else:
                 # Updates interface window
                 window.update()
-                # Check if the robot has some of the missing parts
+                # Check if the robot has some of the missing components
                 robot_missing = robot.check_storage_for(assembly_missing)
-                # If robot has all missing parts go to assembly station
+                # If robot has all missing components go to assembly station
                 if robot_missing == "none":
                     # Calls method to drive robot to assembly station
                     robot.go_to(assembly.location)
-                    # Unloads parts at assembly station
-                    robot.unload_parts(assembly)
+                    # Unloads components at assembly station
+                    robot.unload_components(assembly)
                 else:
-                    # Gets the location of the part
+                    # Gets the location of the component
                     pickup_location = get_pickup_location_for(robot_missing[0])
                     # Calls method to drive robot to pick-up location
                     robot.go_to(pickup_location)
@@ -152,10 +152,10 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
     print("Daily production done")
 
 
-def get_pickup_location_for(part):
-    """ Returns the pickup location of a type of parts
+def get_pickup_location_for(component):
+    """ Returns the pickup location of a type of component
 
-        Args: part (str): Part to get location for
+        Args: component (str): Component to get location for
         """
 
     # Dictionary of products
@@ -167,9 +167,9 @@ def get_pickup_location_for(part):
                      "C6": Location()}
 
     # Checks if the part is in the dictionary
-    if part in location_dict:
+    if component in location_dict:
         # Returns the location of the part
-        return location_dict[part]
+        return location_dict[component]
 
 
 def pass_button_callback(window, quality_c, pass_entry, list_of_products):

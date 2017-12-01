@@ -20,34 +20,34 @@ class AssemblyLine:
         self.storage = in_storage
         self.location = location
 
-    def add_to_storage(self, part):
-        """ Adds a part to the assembly lines storage
+    def add_to_storage(self, component):
+        """ Adds a component to the assembly lines storage
 
         Args:
-            part (str): A part to add to storage
+            component (str): A component to add to storage
         """
-        self.storage.append(part)
-        return "Stored " + part + " in assembly line with id: " + str(self.id)
+        self.storage.append(component)
+        return "Stored " + component + " in assembly line with id: " + str(self.id)
 
-    def check_storage_for(self, parts_list):
-        """ Checks the assembly line storage for a list of parts and returns missing parts
+    def check_storage_for(self, component_list):
+        """ Checks the assembly line storage for a list of components and returns missing components
 
         Args:
-            parts_list (str[list]): List of the parts to check for
+            component_list (str[list]): List of the components to check for
         """
-        # Used for storing which parts are still missing
+        # Used for storing which components are still missing
         still_needed = []
         # Creates a cloned list of what is in storage
         temp = list(self.storage)
-        # Goes through the parts in the list
-        for part in parts_list:
-            # If the part is not in storage append it to the still needed list
-            if part not in temp:
-                still_needed.append(part)
-            # If the part is in storage remove it from the temporary storage clone
+        # Goes through the components in the list
+        for component in component_list:
+            # If the component is not in storage append it to the still needed list
+            if component not in temp:
+                still_needed.append(component)
+            # If the component is in storage remove it from the temporary storage clone
             else:
-                temp.remove(part)
-        # Returns the parts still needed
+                temp.remove(component)
+        # Returns the components still needed
         if still_needed:
             return still_needed
         else:
@@ -59,9 +59,9 @@ class AssemblyLine:
         Args:
             product (Product): A product to assemble
         """
-        for part in product.parts:
-            if part in self.storage:
-                self.storage.remove(part)
+        for component in product.components:
+            if component in self.storage:
+                self.storage.remove(component)
 
         print("Product with ID: " + str(product.id) + " assembled in assembly line " + str(self.id))
         product.status = "Ready for QC"
@@ -82,8 +82,8 @@ if __name__ == '__main__':
     print("In storage:", end=" ")
     print(assembly_line_copenhagen.storage)
 
-    list_parts = ["C1", "C2", "C3", "C4", "C2"]
+    list_components = ["C1", "C2", "C3", "C4", "C2"]
     print("Check if storage has the following:", end=" ")
-    print(list_parts)
+    print(list_components)
     print("Storage is missing:", end=" ")
-    print(assembly_line_copenhagen.check_storage_for(list_parts))
+    print(assembly_line_copenhagen.check_storage_for(list_components))
