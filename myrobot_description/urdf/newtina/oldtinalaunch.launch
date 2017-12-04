@@ -1,0 +1,37 @@
+<launch>
+
+  <arg name="model" default="$(find myrobot_description)/urdf/tina.urdf"/>
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz" />
+
+
+  <!-- loading of the map -->
+  <arg name="map_file" default="$(find map)/wew/map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!--  -->
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+  <param name="use_gui" value="$(arg gui)"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+
+  <!-- Alingeing the world with the map -->
+  <node pkg="tf" type="static_transform_publisher" name="world_map" args="0 0 0 0 0 0 1 world map 10"/>
+
+  <!--  Allinging physical robot the virtual robot -->
+  <node pkg="tf" type="static_transform_publisher" name="true_robotb" args="0 0 0 0 0 0 1 vicon/tina/tina base_link 10"/>
+
+
+
+  <!--  The vicon launch file -->
+
+  <node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="screen">
+	<param name="stream_mode" value="ClientPull" type="str" />
+	<param name="datastream_hostport" value="169.254.9.83:801" type="str" />
+	<param name="tf_ref_frame_id" value="/world" type="str" />
+	</node>
+
+
+</launch>
