@@ -1,9 +1,17 @@
+#!/usr/bin/env python
+
+import rospy
+import actionlib
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+
+
 class Robot:
     """ Class to represent worker robots 
     
     Attributes:
         id (int): A unique number for identifying robots
         storage (str[list]): What is currently on the robot
+        client (MoveBaseAction): Use for controlling robot
     """
 
     def __init__(self, unique_id):
@@ -15,6 +23,10 @@ class Robot:
         self.id = unique_id
         # Storage is empty when the robot is initialized
         self.storage = []
+        # Initializes a ROS node
+        rospy.init_node('robot_command')
+        self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.client.wait_for_server()
 
     def add_to_storage(self, component):
         """ Adds a component to the robots storage
@@ -74,7 +86,20 @@ class Robot:
         Args:
             location (Location): A location to go to
         """
-        # TODO: Make the robot drive to location
+
+        goal_pose = MoveBaseGoal()
+        goal_pose.target_pose.header.frame_id = 'map'
+        goal_pose.target_pose.pose.position.x = location.position[0]
+        goal_pose.target_pose.pose.position.y = location.position[1]
+        goal_pose.target_pose.pose.position.z = location.position[2]
+        goal_pose.target_pose.pose.orientation.x = location.orientation[0]
+        goal_pose.target_pose.pose.orientation.y = location.orientation[1]
+        goal_pose.target_pose.pose.orientation.z = location.orientation[2]
+        goal_pose.target_pose.pose.orientation.w = location.orientation[3]
+
+        self.client.send_goal(goal_pose)
+        self.client.wait_for_result()
+        rospy.sleep(1)
 
 
 # Will only run if this is the main file being run
