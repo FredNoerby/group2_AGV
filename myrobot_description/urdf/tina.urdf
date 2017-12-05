@@ -72,7 +72,7 @@ The model is based on the real
 			      <geometry>
 				<cylinder length="0.007" radius="0.02"/>
 			      </geometry>
-			      <material name="Black"/>
+			       <material name="Black"/>
 			    </visual>
 			  </link>
 
