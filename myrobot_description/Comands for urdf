@@ -1,0 +1,19 @@
+
+
+For this guide we use tina.urdf as an expample 
+
+Update your file my_robot.urdf and run it through the parser:4
+
+  $ check_urdf tina.urdf
+
+That's it, you created your first URDF robot description! Now you can try to visualize the URDF using graphiz:5
+
+  $ urdf_to_graphiz tina.urdf
+
+and open the generated file with your favorite pdf viewer:
+
+  $ evince tina.pdf
+
+
+When in a folder you open run this and the path to view the model in rviz
+roslaunch urdf_tutorial display.launch model:=
