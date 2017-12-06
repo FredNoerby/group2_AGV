@@ -6,7 +6,7 @@
 
 
   <!-- loading of the map -->
-  <arg name="map_file" default="$(find group2_agv)/map/wew/map.yaml"/>
+  <arg name="map_file" default="$(find group2_agv)/map/map.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!--  -->
