@@ -18,13 +18,13 @@
 
 
   <!-- Alingeing the world with the map -->
-  <node pkg="tf" type="static_transform_publisher" name="world_map" args="0 0 0 0 0 0 1 world map 10"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_map" args="0 0 0 0 0 0 1 map world 100"/>
 
   <!--  Allinging physical robot the virtual robot -->
-  <node pkg="tf" type="static_transform_publisher" name="vicon_to_odom" args="0 0 0 0 0 0 1 vicon/tina/tina odom 10"/> 
+  <node pkg="tf" type="static_transform_publisher" name="vicon_to_odom" args="0 0 0 0 0 0 1 vicon/tina/tina odom 100"/> 
 
 
-  <node pkg="tf" type="static_transform_publisher" name="odom_to_base" args="0 0 0 0 0 0 1 odom base_link 10"/> 
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_base" args="0 0 0 0 0 0 1 odom base_link 100"/> 
 
 
 
