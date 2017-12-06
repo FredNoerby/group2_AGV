@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import roslib; roslib.load_manifest('group2_AGV')
+import roslib; roslib.load_manifest('group2_agv')
 import rospy
 from geometry_msgs.msg import Twist
 
@@ -12,7 +12,7 @@ def callback(msg):
 
 def listener():
     rospy.init_node('cmd_vel_listener')
-    rospy.Subscriber("/cmd_vel", Twist, callback)
+    rospy.Subscriber("/cmd_vel_mux/input/teleop", Twist, callback)
     rospy.spin()
 
 if __name__ == '__main__':

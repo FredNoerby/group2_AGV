@@ -21,7 +21,11 @@
   <node pkg="tf" type="static_transform_publisher" name="world_map" args="0 0 0 0 0 0 1 world map 10"/>
 
   <!--  Allinging physical robot the virtual robot -->
-  <node pkg="tf" type="static_transform_publisher" name="true_robotb" args="0 0 0 0 0 0 1 vicon/tina/tina base_link 10"/> 
+  <node pkg="tf" type="static_transform_publisher" name="vicon_to_odom" args="0 0 0 0 0 0 1 vicon/tina/tina odom 10"/> 
+
+
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_base" args="0 0 0 0 0 0 1 odom base_link 10"/> 
+
 
 
 
@@ -45,12 +49,12 @@
   <include file="$(find group2_agv)/launch/move_base.launch.xml"/>
  
  
-  <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
+  <!--<include file="$(find group2_agv)/launch/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
     <arg name="use_map_topic" value="true"/>
     <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
     <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
     <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
-  </include> 
+  </include> -->
 
 </launch>
