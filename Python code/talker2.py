@@ -6,7 +6,7 @@ from std_msgs.msg import Int16MultiArray
 def talker2():
 
 	rospy.init_node('talker2', anonymous=True)    
-	pub = rospy.Publisher('toggle_led', Int16MultiArray, queue_size=10)
+	pub = rospy.Publisher('motor_control', Int16MultiArray, queue_size=10)
 
 	rate = rospy.Rate(10) # 10hz
 	while not rospy.is_shutdown():
