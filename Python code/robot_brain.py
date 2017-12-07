@@ -12,7 +12,7 @@ def callback(msg):
 
 def listener():
     rospy.init_node('cmd_vel_listener')
-    rospy.Subscriber("/cmd_vel_mux/input/teleop", Twist, callback)
+    rospy.Subscriber("/cmd_vel", Twist, callback)
     rospy.spin()
 
 if __name__ == '__main__':
