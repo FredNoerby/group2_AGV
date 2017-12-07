@@ -7,20 +7,22 @@ from std_msgs.msg import Float32MultiArray
 
 def callback(msg):
     rospy.loginfo("Received a /cmd_vel message!")
-    rospy.loginfo("Linear Components: [%f, %f, %f]" % (msg.linear.x, msg.linear.y, msg.linear.z))
-    rospy.loginfo("Angular Components: [%f, %f, %f]" % (msg.angular.x, msg.angular.y, msg.angular.z))
+    # rospy.loginfo("Linear Components: [%f, %f, %f]" % (msg.linear.x, msg.linear.y, msg.linear.z))
+    # rospy.loginfo("Angular Components: [%f, %f, %f]" % (msg.angular.x, msg.angular.y, msg.angular.z))
 
-    left_speed = msg.linear.x * 1250 + msg.angular.z * -1250
-    right_speed = msg.linear.x * 1250 + msg.angular.z * 1250
+    left_speed = msg.linear.x * 250 + msg.angular.z * -250
+    right_speed = msg.linear.x * 250 + msg.angular.z * 250
+
+    rospy.loginfo("Left speed: " + str(left_speed) + " Right speed: " + str(right_speed))
 
     pub = rospy.Publisher('motor_control', Float32MultiArray, queue_size=10)
 
-    rate = rospy.Rate(10)  # 10hz
+    # rate = rospy.Rate(10)  # 10hz
     data = Float32MultiArray()
     data.data = [left_speed, right_speed]
-    rospy.loginfo(data)
+    # rospy.loginfo(data)
     pub.publish(data)
-    rate.sleep()
+    # rate.sleep()
 
 
 def listener():
