@@ -2,7 +2,7 @@
 import roslib; roslib.load_manifest('group2_agv')
 import rospy
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Float16MultiArray
+from std_msgs.msg import Float32MultiArray
 
 
 def callback(msg):
@@ -13,10 +13,10 @@ def callback(msg):
     left_speed = msg.linear.x * 1250 + msg.angular.z * -1250
     right_speed = msg.linear.x * 1250 + msg.angular.z * 1250
 
-    pub = rospy.Publisher('motor_control', Float16MultiArray, queue_size=10)
+    pub = rospy.Publisher('motor_control', Float32MultiArray, queue_size=10)
 
     rate = rospy.Rate(10)  # 10hz
-    data = Float16MultiArray()
+    data = Float32MultiArray()
     data.data = [left_speed, right_speed]
     rospy.loginfo(data)
     pub.publish(data)
