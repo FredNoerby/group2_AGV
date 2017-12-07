@@ -1,6 +1,6 @@
 #include <PID_v1.h>
 #include <ros.h>
-#include <std_msgs/Int16.h>
+#include <std_msgs/Int16MultiArray.h>
 
 // Autonomous Systems Msc Engineering, Autmn 2017, AAU, DK 
 // Inspiration for code found in: https://gist.github.com/ShawnHymel/1de08ffaca990b65fade81cb8d01a44a
@@ -61,18 +61,23 @@ void countRight() {
 // Code for a subcriber function
 ros::NodeHandle  nh;
 
-void messageCb( const std_msgs::Int16& toggle_msg){
-  digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+void messageCb( const std_msgs::Int16MultiArray& toggle_msg){
+  ROS_speed_L_in = toggle_msg.data[0];
+ // // Serial.print(ROS_speed_L_in);
+  ROS_speed_R_in = toggle_msg.data[1];
+ // // Serial.print(ROS_speed_R_in);
+
 }
 
-ros::Subscriber<std_msgs::Int16> sub("toggle_led", &messageCb );
+ros::Subscriber<std_msgs::Int16MultiArray> sub("motor_control", &messageCb );
 
 
 //Setup initiates the Arduino before the loop is run
 void setup() {
   // Setup of the baud rate
-  Serial.begin(57600);
-  
+  //Serial.begin(57600);
+
+ // Serial.println("Im in love with tha coco");
   // Setup of Pins and interrupts
   pinMode(enc_L_pin, INPUT_PULLUP);
   pinMode(enc_R_pin, INPUT_PULLUP); 
@@ -88,7 +93,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(enc_L_pin), countLeft, CHANGE);   // Each time the encoder recognizes a change the program will interupt and call the method countLeft
   attachInterrupt(digitalPinToInterrupt(enc_R_pin), countRight, CHANGE);  // Each time the encoder recognizes a change the program will interupt and call the method countRight
 
-  // Pulls the systems our of standby
+  // Pulls the systems out of standby
   digitalWrite(stby_pin, HIGH);
 
   // Makes the left wheel go forward
@@ -103,20 +108,16 @@ void setup() {
   LeftPID.SetMode(AUTOMATIC);         // The mode options are: DIRECT (like a car) or REVERSE (like a refrigerator)
   LeftPID.SetOutputLimits(70,255);    // The lower limit of 70 ensures that the wheels will turn at low speeds
   LeftPID.SetSampleTime(1);           // The PID will be evaluated every millisecond
-  enc_speed_L = 0;                    // The speed is initialized to zero
+  enc_speed_L = 0;                    // Th    e speed is initialized to zero
   
   RightPID.SetMode(AUTOMATIC);        // The mode options are: DIRECT (like a car) or REVERSE (like a refrigerator)
   RightPID.SetOutputLimits(70,255);   // The lower limit of 70 ensures that the wheels will turn at low speeds
   RightPID.SetSampleTime(1);          // The PID will be evaluated every millisecond
   enc_speed_R = 0;                    // The speed is initialized to zero
 
-  // Hardcoded testing values
-  ROS_speed_L_in = 200;
-  ROS_speed_R_in = 200;
-
-
-  //----- subcriber 
+  // ROS Subcriber 
   pinMode(13, OUTPUT);
+  nh.getHardware()->setBaud(115200);
   nh.initNode();
   nh.subscribe(sub);
   
@@ -139,31 +140,52 @@ void loop() {
   enc_speed_L = Filterconstant * enc_speed_L + (1.0f - Filterconstant) * enc_speed_L_RAW;
   enc_speed_R = Filterconstant * enc_speed_R + (1.0f - Filterconstant) * enc_speed_R_RAW;
 
+  // If both input speeds are zero the system will go to standby
+  if(ROS_speed_L_in == 0 && ROS_speed_R_in == 0){
+    digitalWrite(stby_pin, LOW);
+  } else {
+    digitalWrite(stby_pin, HIGH);
+  }
 
   // PID Loop
   ROS_speed_L = abs(ROS_speed_L_in);  // gets the actual speed setpoint from ROS  
   LeftPID.Compute();                  // Calls a method in the PID library to compute the values
-  analogWrite(pwma_pin, u_speed_L);   // sends output to PWM pin on motor
-
+  
   ROS_speed_R = abs(ROS_speed_R_in);  // gets the actual speed setpoint from ROS
   RightPID.Compute();                 // Calls a method in the PID library to compute the values   
-  analogWrite(pwmb_pin, u_speed_R);   // sends output to PWM pin on motor
 
-  // Prints values for monitoring left wheel
-  Serial.print("enc_speed_L: ");
-  Serial.print(enc_speed_L);
-  Serial.print(" u_speed_L: ");
-  Serial.print(u_speed_L);
-  Serial.print(" ROS_speed_L_in ");
-  Serial.print(ROS_speed_L_in);
+  // Sets the right motor to go forward, backward or stop
+  if(ROS_speed_L_in > 0){
+    digitalWrite(ain1_pin, LOW);
+    digitalWrite(ain2_pin, HIGH);
+    // Sends output to PWM pin on motor
+    analogWrite(pwma_pin, u_speed_L);
+  } else if (ROS_speed_L_in < 0) {
+    digitalWrite(ain1_pin, HIGH);
+    digitalWrite(ain2_pin, LOW);
+    // Sends output to PWM pin on motor
+    analogWrite(pwma_pin, u_speed_L);
+  } else {
+    // Sends output to PWM pin on motor that stops it
+    analogWrite(pwma_pin, 0);         
+  }
+
+  // Sets the right motor to go forward, backward or stop 
+  if(ROS_speed_R_in > 0){
+    digitalWrite(bin1_pin, LOW);
+    digitalWrite(bin2_pin, HIGH);
+    // Sends output to PWM pin on motor
+    analogWrite(pwmb_pin, u_speed_R);
+  } else if (ROS_speed_R_in < 0) {
+    digitalWrite(bin1_pin, HIGH);
+    digitalWrite(bin2_pin, LOW);
+    // Sends output to PWM pin on motor
+    analogWrite(pwmb_pin, u_speed_R);
+  } else {
+    // Sends output to PWM pin on motor that stops it
+    analogWrite(pwmb_pin, 0);
+  }
   
-  // Prints values for monitoring right wheel
-  Serial.print(" enc_speed_R: ");
-  Serial.print(enc_speed_R);
-  Serial.print(" u_speed_R: ");
-  Serial.print(u_speed_R);
-  Serial.print(" ROS_speed_R_in ");
-  Serial.println(ROS_speed_R_in);
-    nh.spinOnce();
-      
-} // VOID LOOP ENDS
+  nh.spinOnce();
+    
+} // VOID LOOP END
