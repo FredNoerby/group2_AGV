@@ -1,6 +1,6 @@
 #include <PID_v1.h>
 #include <ros.h>
-#include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/Float16MultiArray.h>
 
 // Autonomous Systems Msc Engineering, Autmn 2017, AAU, DK 
 // Inspiration for code found in: https://gist.github.com/ShawnHymel/1de08ffaca990b65fade81cb8d01a44a
@@ -61,7 +61,7 @@ void countRight() {
 // Code for a subcriber function
 ros::NodeHandle  nh;
 
-void messageCb( const std_msgs::Int16MultiArray& toggle_msg){
+void messageCb( const std_msgs::Float16MultiArray& toggle_msg){
   ROS_speed_L_in = toggle_msg.data[0];
  // // Serial.print(ROS_speed_L_in);
   ROS_speed_R_in = toggle_msg.data[1];
@@ -69,7 +69,7 @@ void messageCb( const std_msgs::Int16MultiArray& toggle_msg){
 
 }
 
-ros::Subscriber<std_msgs::Int16MultiArray> sub("motor_control", &messageCb );
+ros::Subscriber<std_msgs::Float16MultiArray> sub("motor_control", &messageCb );
 
 
 //Setup initiates the Arduino before the loop is run
