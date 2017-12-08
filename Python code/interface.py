@@ -132,19 +132,26 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
             else:
                 # Updates interface window
                 window.update()
-                # Check if the robot has some of the missing components
-                robot_missing = robot.check_storage_for(assembly_missing)
-                # If robot has all missing components go to assembly station
-                if robot_missing == "none":
+                # Check if the robot's storage is full
+                if robot.isFull:
                     # Calls method to drive robot to assembly station
                     robot.go_to(assembly.location)
                     # Unloads components at assembly station
                     robot.unload_components(assembly)
                 else:
-                    # Gets the location of the component
-                    pickup_location = get_pickup_location_for(robot_missing[0])
-                    # Calls method to drive robot to pick-up location
-                    robot.go_to(pickup_location)
+                    # Check if the robot has some of the missing components
+                    robot_missing = robot.check_storage_for(assembly_missing)
+                    # If robot has all missing components go to assembly station
+                    if robot_missing == "none":
+                        # Calls method to drive robot to assembly station
+                        robot.go_to(assembly.location)
+                        # Unloads components at assembly station
+                        robot.unload_components(assembly)
+                    else:
+                        # Gets the location of the component
+                        pickup_location = get_pickup_location_for(robot_missing[0])
+                        # Calls method to drive robot to pick-up location
+                        robot.go_to(pickup_location)
 
     # Changes interface to display message that production is done
     tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
