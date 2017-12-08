@@ -11,6 +11,7 @@ class Robot:
     Attributes:
         id (int): A unique number for identifying robots
         storage (str[list]): What is currently on the robot
+        isFull (bool): Used to check if the robots storage is full
         client (MoveBaseAction): Use for controlling robot
     """
 
@@ -23,6 +24,8 @@ class Robot:
         self.id = unique_id
         # Storage is empty when the robot is initialized
         self.storage = []
+        # Sets isFull boolean to false
+        self.isFull = False
         # Initializes a ROS node
         rospy.init_node('robot_command')
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
@@ -39,6 +42,9 @@ class Robot:
         if len(self.storage) < 2:
             # Adds the component to the robots storage
             self.storage.append(component)
+            # If the robot's storage is bigger than one it is full
+            if self.storage > 1:
+                self.isFull = True
             return "Added " + component + " to robot with id: " + str(self.id)
         else:
             # Returns message that robot is full
@@ -79,6 +85,8 @@ class Robot:
             print(assembly_line.add_to_storage(component))
         # Clears the robot's storage
         self.storage[:] = []
+        # Sets isFull boolean to false
+        self.isFull = False
 
     def go_to(self, location):
         """ Sends the robot to a specific location
