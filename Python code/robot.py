@@ -43,7 +43,7 @@ class Robot:
             # Adds the component to the robots storage
             self.storage.append(component)
             # If the robot's storage is bigger than one it is full
-            if self.storage > 1:
+            if len(self.storage) > 1:
                 self.isFull = True
             return "Added " + component + " to robot with id: " + str(self.id)
         else:
