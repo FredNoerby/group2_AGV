@@ -6,6 +6,7 @@ from product import Product
 from robot import Robot
 from assembly_line import AssemblyLine
 from quality_control import QualityControl
+from pickup_spot import PickupSpot
 from location import Location
 try:
     import tkinter
@@ -94,7 +95,7 @@ def get_color(component):
         return "#e0e0e0"
 
 
-def start_button_callback(button, window, robot, assembly, list_of_products):
+def start_button_callback(button, window, robot, assembly, list_of_products, component_pickups):
     """ Starts the daily production when the button is pressed
         """
 
@@ -138,6 +139,8 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
                     robot.go_to(assembly.location)
                     # Unloads components at assembly station
                     robot.unload_components(assembly)
+                    # Updates the interface
+                    update_interface_storage(window, robot, assembly)
                 else:
                     # Check if the robot has some of the missing components
                     robot_missing = robot.check_storage_for(assembly_missing)
@@ -147,11 +150,18 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
                         robot.go_to(assembly.location)
                         # Unloads components at assembly station
                         robot.unload_components(assembly)
+                        # Updates the interface
+                        update_interface_storage(window, robot, assembly)
                     else:
-                        # Gets the location of the component
-                        pickup_location = get_pickup_location_for(robot_missing[0])
-                        # Calls method to drive robot to pick-up location
-                        robot.go_to(pickup_location)
+                        spot_to_go = get_pickup_location(robot_missing[0], component_pickups)
+                        # Calls method to drive robot to pickup spot
+                        robot.go_to(spot_to_go.location)
+                        # Removes a component from the pickup spot's storage
+                        spot_to_go.remove_component()
+                        # Adds the component type to the robot
+                        robot.add_to_storage(spot_to_go.type)
+                        # Updates the interface
+                        update_interface_storage(window, robot, assembly)
 
     # Changes interface to display message that production is done
     tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
@@ -159,24 +169,18 @@ def start_button_callback(button, window, robot, assembly, list_of_products):
     print("Daily production done")
 
 
-def get_pickup_location_for(component):
-    """ Returns the pickup location of a type of component
+def get_pickup_location(component, component_pickups):
+    """ Takes in an component and a list of pickup spots and returns where to pickup the component
 
-        Args: component (str): Component to get location for
+        Args:
+            component (str): The component to find pickup spot for
+            component_pickups (PickupSpot[list]): List from which the location can be found
         """
-
-    # Dictionary of products
-    location_dict = {"C1": Location(),
-                     "C2": Location(),
-                     "C3": Location(),
-                     "C4": Location(),
-                     "C5": Location(),
-                     "C6": Location()}
-
-    # Checks if the part is in the dictionary
-    if component in location_dict:
-        # Returns the location of the part
-        return location_dict[component]
+    # Goes through the pickup spots
+    for spot in component_pickups:
+        # If the spot stores the component type needed return the spot
+        if spot.type == component:
+            return spot
 
 
 def pass_button_callback(window, quality_c, pass_entry, list_of_products):
@@ -303,7 +307,7 @@ def update_interface_storage(window, robot, assembly):
         column_counter += 1
 
 
-def load_interface(list_of_products, robot, assembly, quality_c):
+def load_interface(list_of_products, robot, assembly, quality_c, component_pickups):
     """ Creates the main window interface
 
         Args:
@@ -362,7 +366,7 @@ def load_interface(list_of_products, robot, assembly, quality_c):
         row_counter += 1
 
     # Creating a button for sending production schedule to robot
-    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, list_of_products), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
+    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, list_of_products, component_pickups), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
@@ -456,7 +460,12 @@ if __name__ == "__main__":
     mc_turner.add_to_storage("C1")
     mc_turner.add_to_storage("C5")
 
+    # Creates pickup spots for components
+    component_spots = [PickupSpot(1, "C1", Location()), PickupSpot(2, "C2", Location()),
+                       PickupSpot(3, "C3", Location()), PickupSpot(4, "C4", Location()),
+                       PickupSpot(5, "C5", Location()), PickupSpot(6, "C6", Location())]
+
     # Loads the interface
-    main_window = load_interface(product_list, mc_turner, assembly_line, quality_control)
+    main_window = load_interface(product_list, mc_turner, assembly_line, quality_control, component_spots)
     # Runs the main loop
     run_interface(main_window)
