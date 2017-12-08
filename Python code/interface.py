@@ -141,6 +141,8 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                     robot.unload_components(assembly)
                     # Updates the interface
                     update_interface_storage(window, robot, assembly)
+                    # Updates interface window
+                    window.update()
                 else:
                     # Check if the robot has some of the missing components
                     robot_missing = robot.check_storage_for(assembly_missing)
@@ -152,6 +154,8 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                         robot.unload_components(assembly)
                         # Updates the interface
                         update_interface_storage(window, robot, assembly)
+                        # Updates interface window
+                        window.update()
                     else:
                         spot_to_go = get_pickup_location(robot_missing[0], component_pickups)
                         # Calls method to drive robot to pickup spot
@@ -162,11 +166,15 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                         robot.add_to_storage(spot_to_go.type)
                         # Updates the interface
                         update_interface_storage(window, robot, assembly)
+                        # Updates interface window
+                        window.update()
 
     # Changes interface to display message that production is done
     tkinter.Label(window, text='Daily Production Done. You Can Go Home Now.', width=92)\
         .grid(row=1, column=0, columnspan=12, rowspan=34, sticky='nsew')
     print("Daily production done")
+    # Updates interface window
+    window.update()
 
 
 def get_pickup_location(component, component_pickups):
@@ -444,12 +452,16 @@ if __name__ == "__main__":
 
     # Creates a list of type Product with the types from the excel file
     # product_list = load_production_plan()
-    product_list = [Product(1, "P1"), Product(2, "P2"), Product(3, "P3"), Product(4, "P4"), Product(5, "P1"), Product(6, "P1"), Product(7, "P2"), Product(8, "P3"), Product(9, "P4"), Product(10, "P1"), Product(11, "P1"), Product(12, "P2"), Product(13, "P3"), Product(14, "P4"), Product(15, "P1")]
+
+    # Shorter production list for testing purposes
+    product_list = [Product(1, "P1"), Product(2, "P2"), Product(3, "P3"), Product(4, "P4"), Product(5, "P1"),
+                    Product(6, "P1"), Product(7, "P2"), Product(8, "P3"), Product(9, "P4"), Product(10, "P1"),
+                    Product(11, "P1"), Product(12, "P2"), Product(13, "P3"), Product(14, "P4"), Product(15, "P1")]
     # Creates an instance of type Robot with ID: 20
     mc_turner = Robot(20)
 
-    ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
-    # ass_store = ["C1"]
+    # ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
+    ass_store = []
     # Creates an instance of type AssemblyLine with ID: 11 and Location: ??
     assembly_line = AssemblyLine(11, "location", ass_store)
 
@@ -457,8 +469,8 @@ if __name__ == "__main__":
     quality_control = QualityControl(33)
 
     # Adds to the robot storage for testing
-    mc_turner.add_to_storage("C1")
-    mc_turner.add_to_storage("C5")
+    # mc_turner.add_to_storage("C1")
+    # mc_turner.add_to_storage("C5")
 
     # Creates pickup spots for components
     component_spots = [PickupSpot(1, "C1", Location()), PickupSpot(2, "C2", Location()),
