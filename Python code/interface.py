@@ -8,6 +8,7 @@ from assembly_line import AssemblyLine
 from quality_control import QualityControl
 from pickup_spot import PickupSpot
 from location import Location
+import gc
 try:
     import tkinter
 except ImportError:  # python 2
@@ -95,7 +96,7 @@ def get_color(component):
         return "#e0e0e0"
 
 
-def start_button_callback(button, window, robot, assembly, list_of_products, component_pickups):
+def start_button_callback(button, window, robot, assembly, list_of_products, component_pickups, interface_status):
     """ Starts the daily production when the button is pressed
         """
 
@@ -126,7 +127,7 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                 # Calls assembly line method to assemble product
                 assembly.assemble(first_incomplete)
                 # Updates the interfaces different sections
-                update_interface_products(window, list_of_products)
+                update_interface_products(window, list_of_products, interface_status)
                 update_interface_storage(window, robot, assembly)
                 # Updates interface window
                 window.update()
@@ -191,7 +192,7 @@ def get_pickup_location(component, component_pickups):
             return spot
 
 
-def pass_button_callback(window, quality_c, pass_entry, list_of_products):
+def pass_button_callback(window, quality_c, pass_entry, list_of_products, interface_status):
     """ Passes a product from QC when button is pressed
 
         Args:
@@ -206,15 +207,15 @@ def pass_button_callback(window, quality_c, pass_entry, list_of_products):
     pass_entry.delete(0, 'end')
 
     # Goes through all the products to check if one of them matches the ID from the entry field
-    for product in product_list:
+    for product in list_of_products:
         if str(product.id) == text_input:
             # Call a QualityControl method to fail a product
             quality_c.pass_product(product)
             # Call a method to update the interface
-            update_interface_products(window, list_of_products)
+            update_interface_products(window, list_of_products, interface_status)
 
 
-def fail_button_callback(window, quality_c, fail_entry, list_of_products):
+def fail_button_callback(window, quality_c, fail_entry, list_of_products, interface_status):
     """ Fails a product from QC when button is pressed
 
         Args:
@@ -229,15 +230,15 @@ def fail_button_callback(window, quality_c, fail_entry, list_of_products):
     fail_entry.delete(0, 'end')
 
     # Goes through all the products to check if one of them matches the ID from the entry field
-    for product in product_list:
+    for product in list_of_products:
         if str(product.id) == text_input:
             # Call a QualityControl method to fail a product
             quality_c.fail_product(product)
             # Call a method to update the interface
-            update_interface_products(window, list_of_products,)
+            update_interface_products(window, list_of_products, interface_status)
 
 
-def update_interface_products(window, list_to_show):
+def update_interface_products(window, list_to_show, interface_status):
     """ Updates the interface
 
         Args:
@@ -253,23 +254,17 @@ def update_interface_products(window, list_to_show):
             column_counter += 4
             row_counter = 2
 
-        tkinter.Label(window, text=list_to_show[i].id, relief='ridge', width=5, bg='#e0e0e0')\
-            .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_to_show[i].type, relief='ridge', width=10, bg='#e0e0e0')\
-            .grid(row=row_counter, column=column_counter+1, columnspan=1, sticky='nsew')
         # Checks for the products status and changes the color accordingly
         if "Pass" in list_to_show[i].status:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f')\
+            interface_status[i] = tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#9ad88f')\
                 .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         elif "Fail" in list_to_show[i].status:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e')\
+            interface_status[i] = tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d68d8e')\
                 .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
         elif list_to_show[i].status == "Ready for QC":
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b')\
+            interface_status[i] = tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#d6ca8b')\
                 .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
-        else:
-            tkinter.Label(window, text=list_to_show[i].status, relief='ridge', width=15, bg='#e0e0e0')\
-                .grid(row=row_counter, column=column_counter+2, columnspan=1, sticky='nsew')
+
         # Increment the row counter by one
         row_counter += 1
 
@@ -323,6 +318,7 @@ def load_interface(list_of_products, robot, assembly, quality_c, component_picku
             robot (Robot): For displaying robot information in the interface
             assembly (AssemblyLine): For displaying the assembly line information in the interface
             quality_c (QualityControl): For failing and passing product from specific quality control unit
+            component_pickups (PickupSpot[list]): List of pickup spots
         """
     # Creating a main window for the user interface
     window = tkinter.Tk()
@@ -359,32 +355,33 @@ def load_interface(list_of_products, robot, assembly, quality_c, component_picku
     # rospy.loginfo("Loading in production plan..")
     column_counter = 1
     row_counter = 2
+
+    interface_status = []
+
     # Goes through the list and adds each product to the interface
     for i in range(len(list_of_products)):
         if i == 35 or i == 70:
             column_counter += 4
             row_counter = 2
 
-        tkinter.Label(window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0')\
-            .grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0')\
-            .grid(row=row_counter, column=column_counter + 1, columnspan=1, sticky='nsew')
-        tkinter.Label(window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0')\
-            .grid(row=row_counter, column=column_counter + 2, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_of_products[i].id, relief='ridge', width=5, bg='#e0e0e0').grid(row=row_counter, column=column_counter, columnspan=1, sticky='nsew')
+        tkinter.Label(window, text=list_of_products[i].type, relief='ridge', width=10, bg='#e0e0e0').grid(row=row_counter, column=column_counter + 1, columnspan=1, sticky='nsew')
+
+        interface_status.append(tkinter.Label(window, text=list_of_products[i].status, relief='ridge', width=15, bg='#e0e0e0').grid(row=row_counter, column=column_counter + 2, columnspan=1, sticky='nsew'))
         row_counter += 1
 
     # Creating a button for sending production schedule to robot
-    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, list_of_products, component_pickups), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
+    start_button = tkinter.Button(window, text='Start Production', command=lambda: start_button_callback(start_button, window, robot, assembly, list_of_products, component_pickups, interface_status), relief='ridge', width=15, bg='#504adf', fg='#ffffff', activebackground='#716de1', activeforeground='#ffffff')
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
-    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(window, quality_c, pass_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(window, quality_c, pass_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     pass_button.grid(row=1, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     pass_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
     pass_entry.grid(row=1, column=14, columnspan=1, sticky='nsew')
     # Creating a button for failing a product
-    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(window, quality_c, fail_entry, list_of_products), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(window, quality_c, fail_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     fail_button.grid(row=2, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     fail_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
@@ -449,19 +446,20 @@ def run_interface(window):
 
 
 if __name__ == "__main__":
+    gc.disable()
 
     # Creates a list of type Product with the types from the excel file
-    # product_list = load_production_plan()
+    product_list = load_production_plan()
 
     # Shorter production list for testing purposes
-    product_list = [Product(1, "P1"), Product(2, "P2"), Product(3, "P3"), Product(4, "P4"), Product(5, "P1"),
+    """product_list = [Product(1, "P1"), Product(2, "P2"), Product(3, "P3"), Product(4, "P4"), Product(5, "P1"),
                     Product(6, "P1"), Product(7, "P2"), Product(8, "P3"), Product(9, "P4"), Product(10, "P1"),
-                    Product(11, "P1"), Product(12, "P2"), Product(13, "P3"), Product(14, "P4"), Product(15, "P1")]
+                    Product(11, "P1"), Product(12, "P2"), Product(13, "P3"), Product(14, "P4"), Product(15, "P1")]"""
     # Creates an instance of type Robot with ID: 20
     mc_turner = Robot(20)
 
-    # ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
-    ass_store = []
+    ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
+    # ass_store = []
     # Creates an instance of type AssemblyLine with ID: 11 and Location: ??
     assembly_line = AssemblyLine(11, "location", ass_store)
 
