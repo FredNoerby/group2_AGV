@@ -127,8 +127,8 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                 # Calls assembly line method to assemble product
                 assembly.assemble(first_incomplete)
                 # Updates the interfaces different sections
-                update_interface_products(window, list_of_products, interface_status)
-                update_interface_storage(window, robot, assembly, interface_robot, interface_assembly)
+                update_interface_products(list_of_products, interface_status)
+                update_interface_storage(robot, assembly, interface_robot, interface_assembly)
                 # Updates interface window
                 window.update()
             else:
@@ -141,7 +141,7 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                     # Unloads components at assembly station
                     robot.unload_components(assembly)
                     # Updates the interface
-                    update_interface_storage(window, robot, assembly, interface_robot, interface_assembly)
+                    update_interface_storage(robot, assembly, interface_robot, interface_assembly)
                     # Updates interface window
                     window.update()
                 else:
@@ -154,7 +154,7 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                         # Unloads components at assembly station
                         robot.unload_components(assembly)
                         # Updates the interface
-                        update_interface_storage(window, robot, assembly, interface_robot, interface_assembly)
+                        update_interface_storage(robot, assembly, interface_robot, interface_assembly)
                         # Updates interface window
                         window.update()
                     else:
@@ -166,7 +166,7 @@ def start_button_callback(button, window, robot, assembly, list_of_products, com
                         # Adds the component type to the robot
                         robot.add_to_storage(spot_to_go.type)
                         # Updates the interface
-                        update_interface_storage(window, robot, assembly, interface_robot, interface_assembly)
+                        update_interface_storage(robot, assembly, interface_robot, interface_assembly)
                         # Updates interface window
                         window.update()
 
@@ -192,11 +192,10 @@ def get_pickup_location(component, component_pickups):
             return spot
 
 
-def pass_button_callback(window, quality_c, pass_entry, list_of_products, interface_status):
+def pass_button_callback(quality_c, pass_entry, list_of_products, interface_status):
     """ Passes a product from QC when button is pressed
 
         Args:
-            window (tkinter.Tk): The interface window to update
             quality_c (QualityControl): The quality control unit changing the status
             pass_entry (tkinter.Entry): Entry field where the product ID is stored
             list_of_products (Product[list]): The list that contains the product to fail
@@ -213,14 +212,13 @@ def pass_button_callback(window, quality_c, pass_entry, list_of_products, interf
             # Call a QualityControl method to fail a product
             quality_c.pass_product(product)
             # Call a method to update the interface
-            update_interface_products(window, list_of_products, interface_status)
+            update_interface_products(list_of_products, interface_status)
 
 
-def fail_button_callback(window, quality_c, fail_entry, list_of_products, interface_status):
+def fail_button_callback(quality_c, fail_entry, list_of_products, interface_status):
     """ Fails a product from QC when button is pressed
 
         Args:
-            window (tkinter.Tk): The interface window to update
             quality_c (QualityControl): The quality control unit changing the status
             fail_entry (tkinter.Entry): Entry field where the product ID is stored
             list_of_products (Product[list]): The list that contains the product to fail
@@ -237,14 +235,13 @@ def fail_button_callback(window, quality_c, fail_entry, list_of_products, interf
             # Call a QualityControl method to fail a product
             quality_c.fail_product(product)
             # Call a method to update the interface
-            update_interface_products(window, list_of_products, interface_status)
+            update_interface_products(list_of_products, interface_status)
 
 
-def update_interface_products(window, list_to_show, interface_status):
+def update_interface_products(list_to_show, interface_status):
     """ Updates the interface
 
         Args:
-            window (tkinter.Tk): The interface window to update
             list_to_show (list): List of products to show
             interface_status (tkinter.Label[list]): Interface labels to update
         """
@@ -269,11 +266,10 @@ def update_interface_products(window, list_to_show, interface_status):
         row_counter += 1
 
 
-def update_interface_storage(window, robot, assembly, interface_robot, interface_assembly):
+def update_interface_storage(robot, assembly, interface_robot, interface_assembly):
     """ Updates the interface
 
         Args:
-            window (tkinter.Tk): The interface window to update
             robot (Robot): Robot with storage to show
             assembly (AssemblyLine): Assembly line with storage to show
             interface_robot (tkinter.Label[list]): Interface labels representing robot storage
@@ -425,13 +421,13 @@ def load_interface(list_of_products, robot, assembly, quality_c, component_picku
     start_button.grid(row=0, column=13, columnspan=2, sticky='nsew')
 
     # Creating a button for passing a product
-    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(window, quality_c, pass_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    pass_button = tkinter.Button(window, text='Pass Product..', command=lambda: pass_button_callback(quality_c, pass_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     pass_button.grid(row=1, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     pass_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
     pass_entry.grid(row=1, column=14, columnspan=1, sticky='nsew')
     # Creating a button for failing a product
-    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(window, quality_c, fail_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
+    fail_button = tkinter.Button(window, text='Fail Product..', command=lambda: fail_button_callback(quality_c, fail_entry, list_of_products, interface_status), relief='ridge', width=7, bg='#df4a4a', fg='#ffffff', activebackground='#e16d6d', activeforeground='#ffffff')
     fail_button.grid(row=2, column=13, columnspan=1, sticky='nsew')
     # Creating a entry field
     fail_entry = tkinter.Entry(window, text='ID', relief='ridge', width=7)
