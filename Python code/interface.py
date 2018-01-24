@@ -20,7 +20,7 @@ def load_production_plan():
         """
 
     # Uses the openpyxl library to open the production plan excel file
-    workbook = openpyxl.load_workbook('../Daily_Production_Plan.xlsx')
+    workbook = openpyxl.load_workbook('/home/alexkamp/catkin_ws/src/group2_agv/Daily_Production_Plan.xlsx')
     type(workbook)
 
     # Stores the first sheet of the excel file

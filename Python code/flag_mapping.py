@@ -7,7 +7,8 @@ if __name__ == '__main__':
     rospy.init_node('flag_mapping')
     # Creates a transform listener used for getting flag location
     listener = tf.TransformListener()
-    trans, rot = []
+    trans = []
+    rot = []
 
     # Enters loop that will run until script or ROS is shutdown 
     while not rospy.is_shutdown():
@@ -18,9 +19,9 @@ if __name__ == '__main__':
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
 
-        if trans != trans && rot != rot:
-            print("Trans: ", end="")
+        if trans and rot :
+            print("Trans: ")
             print(trans) 
-            print("Rot: ", end="")
+            print("Rot: ")
             print(rot)
         rospy.sleep(10)

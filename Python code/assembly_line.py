@@ -79,11 +79,11 @@ if __name__ == '__main__':
     print(assembly_line_copenhagen.add_to_storage("C4"))
     print(assembly_line_copenhagen.add_to_storage("C3"))
     print(assembly_line_copenhagen.add_to_storage("C2"))
-    print("In storage:", end=" ")
+    print("In storage:")
     print(assembly_line_copenhagen.storage)
 
     list_components = ["C1", "C2", "C3", "C4", "C2"]
-    print("Check if storage has the following:", end=" ")
+    print("Check if storage has the following:")
     print(list_components)
-    print("Storage is missing:", end=" ")
+    print("Storage is missing:")
     print(assembly_line_copenhagen.check_storage_for(list_components))

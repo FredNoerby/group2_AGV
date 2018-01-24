@@ -35,18 +35,18 @@ if __name__ == '__main__':
     # Creates a new instance of PickupSpot
     c6_spot = PickupSpot(123, "C6", "location")
 
-    print("In storage:", end=" ")
+    print("In storage:")
     print(c6_spot.storage)
 
     c6_spot.remove_component()
     c6_spot.remove_component()
     c6_spot.remove_component()
 
-    print("In storage:", end=" ")
+    print("In storage:")
     print(c6_spot.storage)
 
     for x in range(1000):
         c6_spot.remove_component()
 
-    print("In storage:", end=" ")
+    print("In storage:")
     print(c6_spot.storage)
