@@ -463,7 +463,7 @@ if __name__ == "__main__":
     ass_store = ["C1", "C2", "C3", "C4", "C5", "C6", "C5", "C5", "C4", "C1", "C1", "C2", "C3", "C4", "C5"]
     # ass_store = []
     # Creates an instance of type AssemblyLine with ID: 11 and Location: ??
-    assembly_line = AssemblyLine(11, "location", ass_store)
+    assembly_line = AssemblyLine(11, Location(position=[-1.584768513325685, -1.7801166514176172, 0.20401304075903764], orientation=[0.03795156580891418, 0.019484419185985095, 0.0832322780872719, 0.995616604896704]), ass_store)
 
     # Creates an instance of type QualityControl with ID: 33
     quality_control = QualityControl(33)
@@ -473,9 +473,9 @@ if __name__ == "__main__":
     # mc_turner.add_to_storage("C5")
 
     # Creates pickup spots for components
-    component_spots = [PickupSpot(1, "C1", Location()), PickupSpot(2, "C2", Location()),
-                       PickupSpot(3, "C3", Location()), PickupSpot(4, "C4", Location()),
-                       PickupSpot(5, "C5", Location()), PickupSpot(6, "C6", Location())]
+    component_spots = [PickupSpot(1, "C1", Location(position=[-0.616918207425653, -2.242842756135586, 0.19613864438951728], orientation=[-0.009431036312185292, 0.01231264555434063, 0.9922216495797277, -0.12351377420682844])), PickupSpot(2, "C2", Location(position=[-0.2526848031495088, -1.9472643882706038, 0.1913090855095235], orientation=[-0.006304768373071939, 0.03596877622757848, 0.9934187457888075, -0.10856192955103956])),
+                       PickupSpot(3, "C3", Location(position=[0.3108487545847288, -1.5261153773619203, 0.18513323131825318], orientation=[-0.009759002245711364, 0.034387687922184586, 0.9944080981071959, -0.09937194379383027])), PickupSpot(4, "C4", Location(position=[-0.3481939223895538, -1.1952221455465557, 0.1943201055522587], orientation=[-0.006079794582326344, 0.03650010425249907, 0.9968041334066586, -0.07079758548703237])),
+                       PickupSpot(5, "C5", Location(position=[0.40732846559848945, -2.089622572673389, 0.18586021116252788], orientation=[-0.015320796453234562, 0.03568879531847858, 0.992907332438075, -0.11236819957381244])), PickupSpot(6, "C6", Location(position=[-1.0030782814918058, -0.6323491507853269, 0.20239447521922718], orientation=[-0.0063303033380415945, 0.035794560507803705, 0.997557187986339, -0.05965176773985495]))]
 
     # Loads the interface
     main_window = load_interface(product_list, mc_turner, assembly_line, quality_control, component_spots)
